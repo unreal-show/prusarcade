@@ -270,6 +270,22 @@ nav a{white-space:nowrap}
 .promo-card .row a{text-decoration:none}
 .pcount{font-family:"Press Start 2P";font-size:10px;color:var(--ink-soft);margin-bottom:10px;min-height:14px}
 #install-btn{display:none}
+
+/* ===== Pru's High Scores ===== */
+.pru-chip{display:inline-flex;align-items:center;gap:6px;font-family:"Press Start 2P";font-size:9px;color:#0E0B1F;background:var(--lime);padding:6px 8px;border-radius:7px;white-space:nowrap}
+.pru-chip.beat{background:var(--sage);color:#fff}
+.hs{margin-top:20px;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.hs h3{font-size:11px;color:var(--lime);margin-bottom:4px}
+.hs .sub{color:var(--ink-soft);font-size:13px;margin:6px 0 12px}
+.hs table{width:100%;border-collapse:collapse;font-size:14px}
+.hs th{font-family:"Press Start 2P";font-size:8px;color:var(--ink-soft);text-align:left;padding:6px 4px;font-weight:400}
+.hs td{padding:9px 4px;border-top:1px solid var(--line);font-weight:800}
+.hs td.pru{color:var(--pink);font-family:"Press Start 2P";font-size:10px}
+.hs td.you{font-family:"Press Start 2P";font-size:10px;color:var(--cyan)}
+.hs .ok{color:var(--lime);font-family:"Press Start 2P";font-size:9px}
+.hs .todo{color:var(--ink-soft);font-size:12px}
+.beatbox{margin:4px 0 6px;padding:10px 12px;border-radius:12px;background:rgba(184,255,92,.12);border:1.5px solid var(--lime);font-family:"Press Start 2P";font-size:10px;line-height:1.7;color:var(--lime)}
+.beatbox.miss{background:rgba(255,111,181,.08);border-color:rgba(255,111,181,.5);color:var(--cyan)}
 </style>
 </head>
 <body>
@@ -362,6 +378,11 @@ nav a{white-space:nowrap}
         <span class="play">▶ Play</span>
       </a>
     </div>
+    <div class="hs">
+      <h3>▸ PRU'S HIGH SCORES</h3>
+      <div class="sub">My personal bests. Beat one and you get +150 XP and bragging rights. I will be filing a bug report.</div>
+      <table><thead><tr><th>GAME</th><th>PRU</th><th>YOU</th><th></th></tr></thead><tbody id="hs-body"></tbody></table>
+    </div>
     <div class="journal">
       <h3>▸ Your save file</h3>
       <div class="stats" id="home-stats"></div>
@@ -377,7 +398,7 @@ nav a{white-space:nowrap}
       <div class="ro-says" id="mj-say">Match two free tiles (open on the left or right). Let's gooo.</div>
     </div>
     <div class="gtop" style="justify-content:space-between">
-      <div class="meta"><span id="mj-left">84 tiles</span><span id="mj-moves">0 moves</span><span id="mj-time">0:00</span></div>
+      <div class="meta"><span class="pru-chip" data-k="mahjong"></span><span id="mj-left">84 tiles</span><span id="mj-moves">0 moves</span><span id="mj-time">0:00</span></div>
       <div class="tools">
         <button class="btn" id="mj-undo">↶ Undo</button>
         <button class="btn" id="mj-hint">💡 Hint <span id="mj-hc">(3)</span></button>
@@ -399,7 +420,7 @@ nav a{white-space:nowrap}
         <button class="btn on" id="w-daily">Daily #<span id="w-num"></span></button>
         <button class="btn" id="w-prac">Practice</button>
       </div>
-      <div class="tools"><button class="btn" id="w-hint">💡 Reveal a letter <span class="ad">AD</span></button></div>
+      <div class="tools"><span class="pru-chip" data-k="word"></span><button class="btn" id="w-hint">💡 Reveal a letter <span class="ad">AD</span></button></div>
     </div>
     <div id="w-grid"></div>
     <div id="w-kb"></div>
@@ -412,7 +433,7 @@ nav a{white-space:nowrap}
       <div class="ro-says" id="s-say">Every row, column and box gets 1 through 9. No timer pressure, promise.</div>
     </div>
     <div class="gtop" style="justify-content:space-between">
-      <div class="meta"><span id="s-mist">0 mistakes</span><span id="s-time">0:00</span></div>
+      <div class="meta"><span class="pru-chip" data-k="sudoku"></span><span id="s-mist">0 mistakes</span><span id="s-time">0:00</span></div>
       <div class="tools">
         <select class="btn" id="s-diff"><option value="gentle">Casual</option><option value="steady" selected>Ranked</option><option value="tricky">Boss Fight</option></select>
         <button class="btn solid" id="s-new">New puzzle</button>
@@ -435,7 +456,7 @@ nav a{white-space:nowrap}
       <div class="ro-says" id="sol-say">Tap a card to auto-move it. Tap the deck to draw.</div>
     </div>
     <div class="gtop" style="justify-content:space-between">
-      <div class="meta"><span id="sol-moves">0 moves</span><span id="sol-time">0:00</span></div>
+      <div class="meta"><span class="pru-chip" data-k="solitaire"></span><span id="sol-moves">0 moves</span><span id="sol-time">0:00</span></div>
       <div class="tools">
         <button class="btn" id="sol-undo">↶ Undo</button>
         <button class="btn" id="sol-hint">💡 Hint <span id="sol-hc">(3)</span></button>
@@ -460,6 +481,7 @@ nav a{white-space:nowrap}
       <div class="hud"><small>SCORE</small><b id="m-score">0</b></div>
       <div class="hud"><small>TARGET</small><b id="m-target">0</b></div>
       <div class="hud"><small>MOVES</small><b id="m-moves">0</b></div>
+      <div class="hud"><small>PRU'S BEST</small><b style="color:var(--lime)">LV 5</b></div>
     </div>
     <div id="m-prog"><i></i></div>
     <div id="m-grid"></div>
@@ -557,6 +579,46 @@ const RO = {
 };
 const pick = a => a[rnd(a.length)];
 
+/* ---------- Pru's High Scores ---------- */
+// Pru's personal bests. Tuned to be beatable by a regular player in a few tries.
+const PRU_SCORES={
+  mahjong:        {game:"Pru Mahjong",          what:"fastest clear",      pru:495,  lower:true,  f:"time"},
+  word:           {game:"Pru Word",             what:"fewest guesses",     pru:4,    lower:true,  f:"guess"},
+  sudoku_gentle:  {game:"Pru Sudoku · Casual",  what:"fastest solve",      pru:600,  lower:true,  f:"time"},
+  sudoku_steady:  {game:"Pru Sudoku · Ranked",  what:"fastest solve",      pru:960,  lower:true,  f:"time"},
+  sudoku_tricky:  {game:"Pru Sudoku · Boss",    what:"fastest solve",      pru:1560, lower:true,  f:"time"},
+  solitaire:      {game:"Pru Solitaire",        what:"fastest win",        pru:420,  lower:true,  f:"time"},
+  match:          {game:"Pru Match",            what:"highest level",      pru:5,    lower:false, f:"level"},
+  trivia:         {game:"House Trivia",         what:"best round",         pru:1650, lower:false, f:"num"},
+};
+const fmtScore=(k,v)=>{ if(v==null) return "—"; const f=PRU_SCORES[k].f; return f==="time"?fmt(v):f==="guess"?v+"/6":f==="level"?"LV "+v:v.toLocaleString(); };
+const beats=(k,v)=>v!=null&&(PRU_SCORES[k].lower? v<PRU_SCORES[k].pru : v>PRU_SCORES[k].pru);
+function recordScore(k,v){
+  const best=store.get("best",{}), P=PRU_SCORES[k];
+  const prev=best[k]; const pb= prev==null || (P.lower? v<prev : v>prev);
+  if(pb){ best[k]=v; store.set("best",best); }
+  const beaten=store.get("beaten",{}); const beat=beats(k,v); const first=beat&&!beaten[k];
+  if(first){ beaten[k]=true; store.set("beaten",beaten); setTimeout(()=>addXP(150),900); }
+  renderHome(); renderChips();
+  return {k,v,beat,first,pb};
+}
+function beatHTML(r){
+  const P=PRU_SCORES[r.k];
+  if(r.first) return `<div class="beatbox">🏆 YOU BEAT PRU!<br>${fmtScore(r.k,r.v)} vs my ${fmtScore(r.k,P.pru)} · +150 XP<br><span style="font-family:'Pixelify Sans';font-size:15px">Filing a bug report. This can't be legit.</span></div>`;
+  if(r.beat) return `<div class="beatbox">Still beating Pru: ${fmtScore(r.k,r.v)} vs ${fmtScore(r.k,P.pru)}${r.pb?" · new personal best":""}</div>`;
+  return `<div class="beatbox miss">Pru's best: ${fmtScore(r.k,P.pru)} · you: ${fmtScore(r.k,r.v)}${r.pb?" (personal best)":""}<br>So close. Run it back.</div>`;
+}
+function chipKey(k){ return k==="sudoku"?"sudoku_"+(document.getElementById("s-diff")||{}).value:k; }
+function renderChips(){
+  const best=store.get("best",{});
+  document.querySelectorAll(".pru-chip").forEach(el=>{ const k=chipKey(el.dataset.k); if(!PRU_SCORES[k]) return;
+    const b=beats(k,best[k]); el.classList.toggle("beat",b); el.textContent=(b?"✓ BEAT PRU ":"PRU'S BEST ")+fmtScore(k,PRU_SCORES[k].pru); });
+}
+function renderHS(){
+  const best=store.get("best",{}), body=document.getElementById("hs-body"); if(!body) return;
+  body.innerHTML=Object.entries(PRU_SCORES).filter(([k])=>k!=="trivia"||(typeof TRIVIA_OPEN!=="undefined"&&TRIVIA_OPEN)).map(([k,P])=>`<tr><td>${P.game}<div class="todo">${P.what}</div></td><td class="pru">${fmtScore(k,P.pru)}</td><td class="you">${fmtScore(k,best[k])}</td><td>${beats(k,best[k])?'<span class="ok">✓ BEAT</span>':''}</td></tr>`).join("");
+}
+
 /* ---------- stats ---------- */
 function addXP(n){ const s=store.get("stats",{}); const before=Math.floor((s.xp||0)/200); s.xp=(s.xp||0)+n; store.set("stats",s);
   const after=Math.floor(s.xp/200); setTimeout(()=>toast(after>before?`LEVEL UP! You're LV ${after+1}`:`+${n} XP`),150); renderHome(); }
@@ -564,6 +626,7 @@ function bump(key,xp){ const s=store.get("stats",{}); s[key]=(s[key]||0)+1; stor
 function renderHome(){
   const s=store.get("stats",{}), w=store.get("word",{});
   const xp=s.xp||0; $("#xp-lv").textContent="LV "+(Math.floor(xp/200)+1); $("#xp-n").textContent=xp+" XP"; $("#xp-bar").style.width=((xp%200)/2)+"%";
+  renderHS();
   $("#home-stats").innerHTML=`<span>Mahjong clears <b>${s.mj||0}</b></span><span>Word streak <b>${w.streak||0}</b></span><span>Sudoku solved <b>${s.su||0}</b></span><span>Solitaire wins <b>${s.sol||0}</b></span><span>Match level <b>${store.get("matchLevel",1)}</b></span><span>Trivia best <b>${store.get("triviaBest",0)}</b></span>`;
 }
 
@@ -662,9 +725,9 @@ const MJ = (()=>{
   function afterMove(){
     const left=tiles.filter(t=>!t.gone).length;
     if(!left){
-      done=true; bump("mj");
+      done=true; bump("mj"); const hs=recordScore("mahjong",elapsed);
       setTimeout(()=>modal(`<svg style="width:72px;height:72px"><use href="#ro-mark"/></svg><h3>STAGE CLEAR!</h3>
-        <p>${moves} moves in ${fmt(elapsed)}.</p><div class="bigsig">${pick(RO.win)}</div><br>
+        <p>${moves} moves in ${fmt(elapsed)}.</p>${beatHTML(hs)}<div class="bigsig">${pick(RO.win)}</div><br>
         <div class="row"><button class="btn solid" id="mj-again">Play again</button></div>`),350);
       setTimeout(()=>{ const b=$("#mj-again"); if(b) b.onclick=()=>{closeModal(); maybeInterstitial(newGame);}; },360);
       return;
@@ -792,9 +855,9 @@ const WORD = (()=>{
     }
     const grid=guesses.map(g=>score(g,answer).map(x=>x==="c"?"🟩":x==="p"?"🟨":"⬜").join("")).join("\n");
     const share=`Pru Word ${mode==="daily"?"#"+dayNum():"(practice)"} ${won?guesses.length:"X"}/6\n${grid}`;
-    const s=store.get("word",{});
+    const s=store.get("word",{}); const hs=won?recordScore("word",guesses.length):null;
     modal(`<svg style="width:64px;height:64px"><use href="#ro-mark"/></svg>
-      <h3>${won?"VICTORY!":"GAME OVER"}</h3>
+      <h3>${won?"VICTORY!":"GAME OVER"}</h3>${hs?beatHTML(hs):""}
       <p>The word was <b style="text-transform:uppercase;letter-spacing:2px;color:var(--auburn)">${answer}</b>${mode==="daily"?`<br>Streak: <b>${s.streak||0}</b> · Wins: <b>${s.wins||0}</b>/${s.played||0}`:""}</p>
       <div class="bigsig">${won?pick(RO.win):"Continue? Tomorrow's word is already loaded. I believe in you."}</div><br>
       <div class="row"><button class="btn" id="w-share">Copy result</button><button class="btn solid" id="w-more">Practice round</button></div>`);
@@ -910,9 +973,9 @@ const SU = (()=>{
   }
   function check(){
     if(board.every((v,i)=>v===sol[i])){
-      done=true; bump("su",{gentle:60,steady:100,tricky:160}[$("#s-diff").value]);
+      done=true; bump("su",{gentle:60,steady:100,tricky:160}[$("#s-diff").value]); const hs=recordScore("sudoku_"+$("#s-diff").value,elapsed);
       setTimeout(()=>{ modal(`<svg style="width:72px;height:72px"><use href="#ro-mark"/></svg><h3>BOSS DEFEATED!</h3>
-        <p>${$("#s-diff").selectedOptions[0].text} puzzle in ${fmt(elapsed)} with ${mistakes} ${mistakes===1?"mistake":"mistakes"}.</p>
+        <p>${$("#s-diff").selectedOptions[0].text} puzzle in ${fmt(elapsed)} with ${mistakes} ${mistakes===1?"mistake":"mistakes"}.</p>${beatHTML(hs)}
         <div class="bigsig">${pick(RO.win)}</div><br><div class="row"><button class="btn solid" id="s-again">Next puzzle</button></div>`);
         $("#s-again").onclick=()=>{ closeModal(); maybeInterstitial(newGame); }; },300);
     }
@@ -1086,9 +1149,9 @@ const SOL = (()=>{
   }
   function checkWin(){
     if(done || st.found.some(f=>f.length<13)) return;
-    done=true; bump("sol",120);
+    done=true; bump("sol",120); const hs=recordScore("solitaire",elapsed);
     setTimeout(()=>{ modal(`<svg style="width:72px;height:72px"><use href="#ro-mark"/></svg><h3>FLAWLESS DEAL!</h3>
-      <p>${moves} moves in ${fmt(elapsed)}.</p><div class="bigsig">${pick(RO.win)}</div><br>
+      <p>${moves} moves in ${fmt(elapsed)}.</p>${beatHTML(hs)}<div class="bigsig">${pick(RO.win)}</div><br>
       <div class="row"><button class="btn solid" id="sol-again">Deal again</button></div>`);
       $("#sol-again").onclick=()=>{ closeModal(); maybeInterstitial(newGame); }; },400);
   }
@@ -1195,10 +1258,10 @@ const MATCH = (()=>{
   function checkEnd(){
     if(score>=target){
       over=true; const stars=movesLeft>=5?3:movesLeft>=2?2:1;
-      bump("match",60+level*20);
+      bump("match",60+level*20); const hs=recordScore("match",level);
       setTimeout(()=>{ modal(`<svg style="width:64px;height:64px"><use href="#ro-mark"/></svg><h3>LEVEL ${level} CLEAR!</h3>
         <div style="font-size:30px;letter-spacing:6px">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
-        <p>${score} points with ${movesLeft} moves to spare.</p><div class="bigsig">${pick(RO.win)}</div><br>
+        <p>${score} points with ${movesLeft} moves to spare.</p>${(hs.beat||level>=PRU_SCORES.match.pru-1)?beatHTML(hs):""}<div class="bigsig">${pick(RO.win)}</div><br>
         <div class="row"><button class="btn solid" id="m-next">Level ${level+1} ▶</button></div>`);
         $("#m-next").onclick=()=>{ closeModal(); maybeInterstitial(()=>startLevel(level+1)); }; },350);
     } else if(movesLeft<=0){
@@ -1240,6 +1303,7 @@ const MATCH = (()=>{
 /* ============================================================
    HOUSE TRIVIA — UNREAL Season 1 (DRAFT content, internal preview)
    ============================================================ */
+const TRIVIA_OPEN=false;
 const TRIVIA = (()=>{
   // Set latestEpisode to the most recent aired episode so trivia never spoils.
   const CFG={latestEpisode:0, perRound:10, seconds:15};
@@ -1257,7 +1321,7 @@ const TRIVIA = (()=>{
       <br><a class="btn solid" style="text-decoration:none" href="https://www.unreal.show" target="_blank" rel="noopener">unreal.show ↗</a></div>`; return; }
     box().innerHTML=`<div class="tcard tintro"><svg style="width:84px;height:84px"><use href="#ro-mark"/></svg>
       <h3>How well do you know the house?</h3>
-      <p>${CFG.perRound} questions · ${CFG.seconds} seconds each · faster answers score more.<br>Through episode ${CFG.latestEpisode} · ${pool} questions in the bank · Your best: <b style="color:var(--pink)">${best}</b></p>
+      <p>${CFG.perRound} questions · ${CFG.seconds} seconds each · faster answers score more.<br>Through episode ${CFG.latestEpisode} · ${pool} questions in the bank · Your best: <b style="color:var(--pink)">${best}</b> · Pru's best: <b style="color:var(--lime)">1,650</b></p>
       <br><button class="btn solid" id="t-go">▶ Start round</button></div>`;
     $("#t-go").onclick=start;
   }
@@ -1309,11 +1373,11 @@ const TRIVIA = (()=>{
   function finish(){
     const best=Math.max(store.get("triviaBest",0),pts); store.set("triviaBest",best);
     const title=correct>=9?"Certified Superfan":correct>=7?"Cast Member Material":correct>=4?"Confessional Regular":"Just Moved In";
-    addXP(correct*15); renderHome();
+    addXP(correct*15); const hs=recordScore("trivia",pts);
     const share=`House Trivia: ${correct}/${round.length} · ${pts} pts · "${title}"`;
     box().innerHTML=`<div class="tcard tintro"><svg style="width:72px;height:72px"><use href="#ro-mark"/></svg>
       <h3>${title.toUpperCase()}</h3>
-      <p><b style="font-size:22px;color:var(--cyan)">${correct}/${round.length}</b> correct · <b style="color:var(--pink)">${pts}</b> points<br>Your best: ${best}</p>
+      <p><b style="font-size:22px;color:var(--cyan)">${correct}/${round.length}</b> correct · <b style="color:var(--pink)">${pts}</b> points<br>Your best: ${best}</p>${beatHTML(hs)}
       <div class="bigsig" style="font-family:'Pixelify Sans';color:var(--cyan);font-size:19px">${correct>=7?"Okay, you actually know the house. Respect.":"No shame. Even I needed the bug reports."}</div><br>
       <div class="row" style="display:flex;gap:8px;justify-content:center"><button class="btn" id="t-share">Copy result</button><button class="btn solid" id="t-again">Play again</button></div></div>`;
     $("#t-share").onclick=async()=>{ try{ await navigator.clipboard.writeText(share); toast("Copied! Go flex in the group chat."); }catch(e){ toast("Couldn't copy here, sorry!"); } };
@@ -1336,7 +1400,8 @@ function route(){
 }
 $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal" && !$("#modal-body").querySelector("[disabled]")) closeModal(); });
 addEventListener("hashchange",route);
-MJ.init(); WORD.init(); SU.init(); SOL.init(); MATCH.init(); TRIVIA.init(); renderHome(); route();
+MJ.init(); WORD.init(); SU.init(); SOL.init(); MATCH.init(); TRIVIA.init(); renderHome(); renderChips(); route();
+$("#s-diff").addEventListener("change",renderChips);
 </script>
 <script>
 /* ---------- installable app (PWA) ---------- */
