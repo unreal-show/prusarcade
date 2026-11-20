@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120E26">
+<title>Pru's Arcade</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pru's Arcade">
+<link rel="canonical" href="https://www.prusarcade.com/">
+<meta name="description" content="Pru's Arcade: six games from Pru Nakamura of UNREAL. Mahjong, Word, Sudoku, Solitaire, Match and House Trivia.">
+<style>
+@font-face{font-family:"Press Start 2P";font-style:normal;font-weight:400;font-display:swap;src:url(press-start-2p-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Pixelify Sans";font-style:normal;font-weight:500;font-display:swap;src:url(pixelify-sans-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Pixelify Sans";font-style:normal;font-weight:700;font-display:swap;src:url(pixelify-sans-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url(anton-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:400;font-display:swap;src:url(nunito-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:600;font-display:swap;src:url(nunito-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:700;font-display:swap;src:url(nunito-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:800;font-display:swap;src:url(nunito-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-style:normal;font-weight:900;font-display:swap;src:url(nunito-latin-900-normal.woff2) format("woff2")}
+
+/* ===== Pru brand tokens — neon arcade ===== */
+:root{
+  --paper:#120E26; --paper-2:#231B45; --card:#1C1638;
+  --ink:#F5EEFF; --ink-soft:#B4A7DC;
+  --pink:#19E6B4; --purple:#8B5CF6; --cyan:#FF6FB5; --lime:#B8FF5C;
+  --auburn:#19E6B4; --auburn-2:#5FF2CF;          /* primary = Pru teal-green */
+  --sage:#22D3A6; --sage-l:rgba(34,211,166,.14);  /* correct / mint */
+  --mustard:#FFB020; --mustard-l:rgba(255,176,32,.14);
+  --rose:#9B6BFF; --rose-l:rgba(155,107,255,.18);
+  --line:#3A2F6B; --absent:#3B3360;
+  --glow:0 0 0 1px #3A2F6B, 0 0 24px rgba(155,107,255,.18);
+  --shadow:var(--glow);
+  --r:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;display:flex;flex-direction:column;
+  background:
+   radial-gradient(900px 500px at 85% -10%,rgba(25,230,180,.22),transparent 60%),
+   radial-gradient(800px 500px at -10% 10%,rgba(255,111,181,.13),transparent 60%),
+   linear-gradient(rgba(155,107,255,.06) 1px,transparent 1px) 0 0/28px 28px,
+   linear-gradient(90deg,rgba(155,107,255,.06) 1px,transparent 1px) 0 0/28px 28px,
+   var(--paper);background-attachment:fixed}
+button{font-family:inherit;color:inherit;cursor:pointer}
+h1,h2,h3{font-family:"Press Start 2P",monospace;margin:0;line-height:1.35;letter-spacing:-.5px}
+.hand{font-family:"Pixelify Sans",monospace}
+
+/* ===== Header ===== */
+header{display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 10px calc(16px + env(safe-area-inset-left));border-bottom:1px solid var(--line);background:rgba(18,14,38,.85);position:sticky;top:0;z-index:50;backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand svg{width:42px;height:42px;flex:none;filter:drop-shadow(0 0 6px rgba(25,230,180,.6))}
+.brand b{font-family:"Press Start 2P",monospace;font-size:13px;text-shadow:2px 2px 0 var(--purple)}
+.brand small{display:block;font-family:"Pixelify Sans",monospace;color:var(--cyan);font-size:15px;margin-top:4px}
+nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--ink-soft);font-weight:800;font-size:14px;padding:7px 12px;border-radius:10px;border:1.5px solid transparent}
+nav a:hover{color:var(--ink);border-color:var(--line)}
+nav a.on{background:var(--pink);color:#0E0B1F;box-shadow:0 0 14px rgba(25,230,180,.6)}
+@media (max-width:560px){header{padding:8px 10px;gap:8px}.brand span{display:none}nav{flex-wrap:nowrap;gap:2px}nav a{padding:6px 10px;font-size:13px}.gtop h2{font-size:16px}}
+
+main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:18px calc(14px + env(safe-area-inset-right)) calc(110px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
+.view{display:none}.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+
+/* ===== Home ===== */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;background:linear-gradient(135deg,#251A4D,#1B1438 60%,#2A1240);border-radius:24px;padding:26px;box-shadow:var(--glow);position:relative;overflow:hidden;border:1px solid #4A3A85}
+.hero::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.12) 3px 4px);pointer-events:none}
+.hero svg.big{width:136px;height:136px;filter:drop-shadow(0 0 16px rgba(25,230,180,.55))}
+.hero h1{font-size:clamp(18px,3.4vw,28px)}
+.hero h1 em{font-style:normal;color:var(--pink);text-shadow:0 0 12px rgba(25,230,180,.7)}
+.hero p{margin:14px 0 0;color:var(--ink-soft);font-size:16px;line-height:1.55;max-width:54ch}
+.hero .sig{font-family:"Pixelify Sans",monospace;font-size:20px;color:var(--cyan);margin-top:8px}
+.tape{position:absolute;top:14px;right:16px;font-family:"Press Start 2P";font-size:9px;color:var(--lime);border:1.5px solid var(--lime);padding:6px 8px;border-radius:6px;animation:blink 1.2s steps(2) infinite}
+.tape::before{content:"● LIVE"}
+@keyframes blink{50%{opacity:.35}}
+.xp{margin-top:14px;display:flex;align-items:center;gap:10px;font-family:"Press Start 2P";font-size:10px;color:var(--lime)}
+.xp .bar{flex:1;max-width:260px;height:12px;border-radius:6px;background:#2D2456;border:1px solid #4A3A85;overflow:hidden}
+.xp .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));box-shadow:0 0 10px var(--pink)}
+@media (max-width:560px){.hero{grid-template-columns:1fr;text-align:center}.hero svg.big{margin:0 auto;width:104px;height:104px}.hero p{margin-inline:auto}.xp{justify-content:center}.tape{display:none}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}
+.gcard{background:var(--card);border-radius:var(--r);padding:18px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:9px;transition:transform .15s, box-shadow .15s;border:1.5px solid var(--line);box-shadow:inset 0 3px 0 var(--c)}
+.gcard:hover{transform:translateY(-4px);box-shadow:inset 0 3px 0 var(--c),0 0 0 1.5px var(--c),0 0 28px color-mix(in srgb,var(--c) 45%,transparent)}
+.gcard .art{height:96px;border-radius:12px;background:var(--cl);display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line)}
+.gcard h3{font-size:14px}
+.gcard p{margin:0;color:var(--ink-soft);font-size:14px;line-height:1.5}
+.gcard .play{margin-top:auto;align-self:flex-start;background:var(--c);color:#120E26;font-family:"Press Start 2P";padding:10px 14px;border-radius:10px;font-size:10px}
+.mini{width:30px;height:38px;border-radius:6px;background:#FBF7FF;box-shadow:2px 2px 0 #C9B6FF,3px 3px 0 var(--pink);display:flex;align-items:center;justify-content:center;font-size:18px}
+.wmini{width:28px;height:28px;border-radius:6px;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:15px}
+.smini{display:grid;grid-template-columns:repeat(3,22px);gap:2px}
+.smini span{height:22px;background:#2D2456;border-radius:4px;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;color:var(--cyan)}
+.journal{margin-top:20px;background:var(--card);border-radius:var(--r);padding:16px 18px;border:1.5px solid var(--line)}
+.journal h3{font-size:11px;margin-bottom:12px;color:var(--cyan)}
+.journal .stats{display:flex;gap:24px;flex-wrap:wrap;font-family:"Pixelify Sans",monospace;font-size:19px;color:var(--ink)}
+.journal .stats b{color:var(--pink);font-size:22px;text-shadow:0 0 10px rgba(25,230,180,.6)}
+
+/* ===== Shared game chrome ===== */
+.gtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.gtop h2{font-size:18px;text-shadow:3px 3px 0 var(--purple)}
+.gtop .ro-says{font-family:"Pixelify Sans",monospace;font-size:18px;color:var(--cyan);flex:1;min-width:180px}
+.gtop .ro-says::before{content:"Pru ▸ ";color:var(--pink)}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--line);background:var(--card);padding:8px 13px;border-radius:10px;font-weight:800;font-size:14px;display:inline-flex;gap:6px;align-items:center;color:var(--ink)}
+.btn:hover{border-color:var(--purple);box-shadow:0 0 12px rgba(155,107,255,.4)}
+.btn.solid,.btn.auburn{background:var(--pink);border-color:var(--pink);color:#0E0B1F;box-shadow:0 0 14px rgba(25,230,180,.45)}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:none}
+.btn .ad{font-size:10px;background:var(--lime);color:#120E26;padding:1px 5px;border-radius:4px;font-weight:900}
+.meta{font-family:"Press Start 2P";color:var(--ink-soft);font-size:10px;display:flex;gap:16px}
+select.btn{appearance:none;padding-right:13px}
+select.btn option{background:var(--card)}
+
+/* ===== Mahjong ===== */
+#mj-wrap{background:radial-gradient(circle at 50% 40%,#2C1E5C,#170F33);border-radius:22px;padding:26px 10px 20px;border:1.5px solid #4A3A85;box-shadow:inset 0 0 40px rgba(155,107,255,.25),0 0 30px rgba(155,107,255,.12);overflow:hidden}
+#mj-board{position:relative;margin:0 auto}
+.tile{position:absolute;border-radius:8px;background:linear-gradient(160deg,#FFFFFF,#EFE6FF);border:1px solid #C9B6FF;
+  box-shadow:3px 3px 0 #C9B6FF, 5px 5px 0 #8F5BFF, 6px 8px 10px rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;user-select:none;cursor:pointer;transition:transform .08s, filter .15s}
+.tile span{line-height:1}
+.tile.blocked{filter:brightness(.62) saturate(.7)}
+.tile.sel{background:linear-gradient(160deg,#FFE3F1,#FFB8DA);border-color:var(--pink);transform:translate(-2px,-3px);box-shadow:3px 3px 0 #FF8CC4,5px 5px 0 var(--pink),0 0 18px rgba(25,230,180,.9)}
+.tile.hint{animation:pulse .5s ease 3}
+.tile.shake{animation:shake .3s}
+.tile.gone{animation:pop .22s forwards;pointer-events:none}
+@keyframes pulse{50%{background:#E7FFF9;box-shadow:0 0 22px var(--cyan);transform:translate(-2px,-3px)}}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes pop{to{transform:scale(.6) translateY(-10px);opacity:0}}
+
+/* ===== Word ===== */
+#w-grid{display:grid;grid-template-rows:repeat(6,1fr);gap:7px;width:min(330px,88vw);margin:6px auto 14px}
+.wrow{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.wrow.shake{animation:shake .3s}
+.wt{aspect-ratio:1;border:2px solid var(--line);background:#181231;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"Press Start 2P",monospace;font-size:clamp(16px,5vw,22px);text-transform:uppercase;color:var(--ink)}
+.wt.filled{border-color:var(--purple);box-shadow:0 0 10px rgba(155,107,255,.45);animation:tap .1s}
+.wt.c,.wt.p,.wt.a{color:#fff;border-color:transparent;animation:flip .45s ease both}
+.wt.c{background:var(--sage);box-shadow:0 0 14px rgba(34,211,166,.55)}
+.wt.p{background:var(--mustard);color:#1B1230;box-shadow:0 0 14px rgba(255,176,32,.5)}
+.wt.a{background:var(--absent)}
+@keyframes tap{50%{transform:scale(1.08)}}
+@keyframes flip{0%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+#w-kb{display:flex;flex-direction:column;gap:6px;max-width:500px;margin:0 auto}
+.kr{display:flex;gap:5px;justify-content:center}
+.key{flex:1;max-width:44px;height:52px;border:1px solid var(--line);border-radius:8px;background:#2A2150;font-weight:900;font-size:15px;text-transform:uppercase;box-shadow:0 3px 0 #0C0820;color:var(--ink)}
+.key:active{transform:translateY(2px);box-shadow:0 1px 0 #0C0820}
+.key.wide{max-width:68px;flex:1.5;font-size:11px}
+.key.c{background:var(--sage);color:#fff}.key.p{background:var(--mustard);color:#1B1230}.key.a{background:#1A1433;color:#6C6299}
+
+/* ===== Sudoku ===== */
+#s-grid{display:grid;grid-template-columns:repeat(9,1fr);width:min(468px,94vw);aspect-ratio:1;margin:0 auto;border:2.5px solid var(--purple);border-radius:12px;overflow:hidden;background:#181231;box-shadow:0 0 26px rgba(155,107,255,.35)}
+.sc{border-right:1px solid #2E2558;border-bottom:1px solid #2E2558;display:flex;align-items:center;justify-content:center;font-family:Nunito;font-size:clamp(18px,5.2vw,28px);font-weight:800;cursor:pointer;position:relative;user-select:none}
+.sc:nth-child(9n){border-right:none}
+.sc.br{border-right:2px solid var(--purple)}.sc.bb{border-bottom:2px solid var(--purple)}
+.sc.given{color:var(--ink)}
+.sc.user{color:var(--cyan);text-shadow:0 0 8px rgba(255,111,181,.6)}
+.sc.err{color:#FF5D73;background:rgba(255,93,115,.16)!important;text-shadow:none}
+.sc.peer{background:#211946}
+.sc.same{background:rgba(25,230,180,.18)}
+.sc.sel{background:rgba(25,230,180,.32)!important;box-shadow:inset 0 0 0 2px var(--pink)}
+.sc .notes{position:absolute;inset:2px;display:grid;grid-template-columns:repeat(3,1fr);font-size:clamp(8px,2vw,11px);color:var(--ink-soft);font-weight:800}
+.sc .notes i{font-style:normal;display:flex;align-items:center;justify-content:center}
+#s-pad{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;width:min(468px,94vw);margin:12px auto 0}
+#s-pad button{height:52px;border:1px solid var(--line);border-radius:10px;background:#2A2150;box-shadow:0 3px 0 #0C0820;font-size:22px;font-weight:900;color:var(--ink)}
+#s-pad button:active{transform:translateY(2px)}
+#s-pad button.done{opacity:.25}
+.s-tools{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.btn.on{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 0 12px rgba(155,107,255,.6)}
+
+/* ===== Ads (placeholders) ===== */
+#ad-banner{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(18,14,38,.94);border-top:1px solid var(--line)}
+.ad-slot{width:min(728px,100%);height:60px;border:1.5px dashed #5A4A99;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:10px;color:#9A8CCB;font-size:13px;font-weight:800;background:repeating-linear-gradient(45deg,transparent 0 10px,rgba(155,107,255,.07) 10px 20px)}
+.ad-slot .tag,.ad-box .tag{background:var(--lime);color:#120E26;font-size:10px;padding:2px 6px;border-radius:4px;letter-spacing:.5px;font-weight:900}
+
+/* ===== Modals / toast ===== */
+.scrim{position:fixed;inset:0;background:rgba(8,5,20,.7);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(3px)}
+.scrim.on{display:flex;animation:fade .2s}
+.modal{background:linear-gradient(160deg,#261B52,#1A1338);border:1.5px solid var(--purple);border-radius:22px;padding:26px;max-width:380px;width:100%;text-align:center;box-shadow:0 0 40px rgba(155,107,255,.45);position:relative}
+.modal h3{font-size:16px;margin:10px 0;color:var(--pink);text-shadow:0 0 12px rgba(25,230,180,.6)}
+.modal p{color:var(--ink-soft);line-height:1.55;margin:8px 0 16px}
+.modal .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.modal .bigsig{font-family:"Pixelify Sans",monospace;font-size:20px;color:var(--cyan)}
+.ad-box{height:200px;border:2px dashed #5A4A99;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#9A8CCB;font-weight:800;margin:10px 0 14px;background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(155,107,255,.08) 12px 24px)}
+#toast{position:fixed;top:76px;left:50%;transform:translateX(-50%);background:var(--pink);color:#0E0B1F;padding:10px 16px;border-radius:12px;font-weight:800;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center;box-shadow:0 0 20px rgba(25,230,180,.6)}
+#toast.on{opacity:1}
+footer{text-align:center;color:var(--ink-soft);font-size:13px;padding:14px 0 0}
+
+/* ===== Nav scroll for 7 items ===== */
+nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;min-width:0}
+nav::-webkit-scrollbar{display:none}
+nav a{white-space:nowrap}
+.pill{font-family:"Press Start 2P";font-size:8px;padding:4px 6px;border-radius:5px;background:var(--lime);color:#120E26;vertical-align:middle;margin-left:6px}
+.pill.draft{background:#FFB020}
+
+/* ===== Solitaire ===== */
+#sol-felt{background:radial-gradient(circle at 50% 30%,#2C1E5C,#170F33);border:1.5px solid #4A3A85;border-radius:22px;padding:14px;box-shadow:inset 0 0 40px rgba(155,107,255,.25)}
+.sol-row{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--gap,8px)}
+.slot{position:relative;aspect-ratio:5/7;border-radius:8px;border:1.5px dashed #5A4A99;display:flex;align-items:center;justify-content:center;color:#5A4A99;font-size:22px;font-family:"Press Start 2P"}
+.slot.stock{cursor:pointer}
+.col{position:relative;cursor:default}
+.card{position:absolute;left:0;top:0;width:100%;aspect-ratio:5/7;border-radius:8px;background:linear-gradient(160deg,#fff,#F1E9FF);border:1px solid #C9B6FF;box-shadow:0 2px 6px rgba(0,0,0,.35);color:#1C1638;cursor:pointer;user-select:none;transition:transform .08s}
+.card.red{color:#E8358A}
+.card .cr{position:absolute;top:4px;left:5px;font-weight:900;font-size:var(--fs,15px);line-height:1;text-align:center}
+.card .cs{position:absolute;right:6px;bottom:3px;font-size:calc(var(--fs,15px)*1.9);line-height:1}
+.card.back{background:repeating-linear-gradient(45deg,#19E6B4 0 6px,#0FBF95 6px 12px);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35),inset 0 0 0 3px #9B6BFF}
+.card.back::after{content:"PRU";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Press Start 2P";font-size:calc(var(--fs,15px)*.75);color:#fff;text-shadow:2px 2px 0 #9B6BFF}
+.card.hint{animation:pulse .5s ease 3}
+.card.shake{animation:shake .3s}
+.card.sel{box-shadow:0 0 0 2px var(--pink),0 0 16px var(--pink)}
+.slot .fs{font-size:26px;opacity:.5;font-family:Nunito}
+
+/* ===== Match-3 ===== */
+#m-hud{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.hud{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:8px 14px;text-align:center;min-width:92px}
+.hud small{display:block;font-family:"Press Start 2P";font-size:8px;color:var(--ink-soft);margin-bottom:6px}
+.hud b{font-family:"Press Start 2P";font-size:15px;color:var(--cyan)}
+#m-prog{width:min(468px,94vw);height:12px;margin:0 auto 12px;border-radius:6px;background:#2D2456;border:1px solid #4A3A85;overflow:hidden}
+#m-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));transition:width .3s}
+#m-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;width:min(468px,94vw);margin:0 auto;padding:8px;border-radius:16px;background:radial-gradient(circle at 50% 30%,#2C1E5C,#170F33);border:1.5px solid #4A3A85;box-shadow:0 0 26px rgba(155,107,255,.3);touch-action:none;user-select:none}
+.gem{aspect-ratio:1;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:clamp(20px,6.4vw,34px);cursor:pointer;transition:transform .12s}
+.gem.sel{background:rgba(25,230,180,.35);box-shadow:0 0 0 2px var(--pink),0 0 14px var(--pink)}
+.gem.pop{animation:gpop .22s forwards}
+.gem.drop{animation:gdrop .25s ease-out}
+.gem.hint{animation:pulse .5s ease 3}
+.gem.shake{animation:shake .3s}
+@keyframes gpop{50%{transform:scale(1.3);filter:brightness(2)}100%{transform:scale(0);opacity:0}}
+@keyframes gdrop{from{transform:translateY(-60%);opacity:0}}
+#m-combo{height:24px;text-align:center;font-family:"Press Start 2P";font-size:12px;color:var(--lime);margin:8px 0 0;text-shadow:0 0 10px var(--lime)}
+
+/* ===== Trivia ===== */
+.draftbar{background:rgba(255,176,32,.12);border:1.5px solid #FFB020;color:#FFD27A;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.45;margin-bottom:14px}
+.draftbar b{color:#FFB020}
+#t-box{max-width:620px;margin:0 auto}
+.tcard{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:22px}
+.tq{font-size:20px;font-weight:800;line-height:1.4;margin:10px 0 16px}
+.tmeta{display:flex;justify-content:space-between;font-family:"Press Start 2P";font-size:9px;color:var(--ink-soft)}
+.ttimer{height:8px;border-radius:4px;background:#2D2456;overflow:hidden;margin-top:10px}
+.ttimer i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .1s linear}
+.topts{display:grid;gap:10px}
+.topt{text-align:left;border:1.5px solid var(--line);background:#231B45;border-radius:12px;padding:13px 14px;font-weight:800;font-size:16px;color:var(--ink)}
+.topt:hover:not(:disabled){border-color:var(--purple);box-shadow:0 0 12px rgba(155,107,255,.4)}
+.topt.right{background:var(--sage);border-color:var(--sage);color:#fff;box-shadow:0 0 16px rgba(34,211,166,.55)}
+.topt.wrong{background:#5A2340;border-color:#FF5D73;color:#FFC2CC}
+.topt.gone{opacity:.2}
+.topt:disabled{cursor:default}
+.tfact{margin-top:14px;color:var(--ink-soft);font-size:14px;line-height:1.5;display:none}
+.tfact.on{display:block}
+.tep{display:inline-block;font-family:"Press Start 2P";font-size:8px;color:var(--cyan);border:1px solid var(--cyan);border-radius:5px;padding:4px 6px}
+.tintro{text-align:center}
+.tintro h3{font-size:16px;color:var(--pink);margin:12px 0}
+.tintro p{color:var(--ink-soft);line-height:1.55}
+
+/* ===== UNREAL house ads (show promos) ===== */
+.ur{font-family:Anton,Impact,"Arial Narrow",sans-serif;letter-spacing:1px;background:linear-gradient(90deg,#ff2e88,#b46bff 45%,#22e4ff 80%,#e8fffe);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 10px rgba(180,107,255,.45))}
+.promo{width:min(728px,100%);height:60px;border-radius:12px;display:flex;align-items:center;gap:14px;padding:0 14px;text-decoration:none;color:#E9E6F5;background:#07070b;border:1.5px solid transparent;background-image:linear-gradient(#07070b,#07070b),linear-gradient(90deg,#ff2e88,#b46bff,#22e4ff);background-origin:border-box;background-clip:padding-box,border-box;box-shadow:0 0 18px rgba(180,107,255,.25)}
+.promo .ur{font-size:28px;line-height:1}
+.promo .ptxt{flex:1;font-size:13px;line-height:1.3;color:#B9B3D1;min-width:0}
+.promo .ptxt b{color:#fff;display:block;font-size:14px}
+.promo .pcta{font-weight:900;font-size:13px;color:#07070b;background:linear-gradient(90deg,#ff2e88,#b46bff,#22e4ff);padding:8px 12px;border-radius:999px;white-space:nowrap}
+.promo .ptag{position:absolute;margin:-52px 0 0 -6px;font-size:8px;font-weight:900;letter-spacing:1px;color:#8C86A8}
+@media (max-width:520px){.promo{gap:10px;padding:0 10px}.promo .ur{font-size:22px}.promo .ptxt{font-size:11px}.promo .ptxt b{font-size:12px}.promo .pcta{padding:7px 10px;font-size:11px}}
+.promo-card{background:#07070b;border-radius:16px;padding:20px 16px;margin:10px 0 14px;border:1.5px solid transparent;background-image:linear-gradient(#07070b,#07070b),linear-gradient(135deg,#ff2e88,#b46bff,#22e4ff);background-origin:border-box;background-clip:padding-box,border-box}
+.promo-card .from{font-size:9px;font-weight:900;letter-spacing:2px;color:#8C86A8}
+.promo-card .ur{font-size:54px;line-height:1.05;margin:6px 0}
+.promo-card p{color:#C9C3E3!important;margin:6px 0 10px!important;font-size:14px}
+.promo-card .names{font-size:12px;font-weight:800;color:#fff;letter-spacing:.5px}
+.promo-card .soon{font-family:"Press Start 2P";font-size:9px;color:#22e4ff;margin:12px 0 14px}
+.promo-card .row a{text-decoration:none}
+.pcount{font-family:"Press Start 2P";font-size:10px;color:var(--ink-soft);margin-bottom:10px;min-height:14px}
+#install-btn{display:none}
+</style>
+</head>
+<body>
+
+<!-- Pru emblem (reusable) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="ro-mark" viewBox="0 0 120 120">
+      <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19E6B4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+      <rect x="8" y="8" width="104" height="104" rx="26" fill="#14102A" stroke="url(#rg)" stroke-width="5"/>
+      <!-- headset -->
+      <path d="M22 60 Q22 20 60 20 Q98 20 98 60" fill="none" stroke="#2A2150" stroke-width="7" stroke-linecap="round"/>
+      <path d="M22 60 Q22 20 60 20 Q98 20 98 60" fill="none" stroke="url(#rg)" stroke-width="3.5" stroke-linecap="round"/>
+      <rect x="13" y="52" width="14" height="24" rx="6" fill="#19E6B4"/><rect x="93" y="52" width="14" height="24" rx="6" fill="#8B5CF6"/>
+      <!-- round clear glasses -->
+      <circle cx="44" cy="50" r="13" fill="rgba(255,255,255,.08)" stroke="#F5EEFF" stroke-width="3.5"/>
+      <circle cx="76" cy="50" r="13" fill="rgba(255,255,255,.08)" stroke="#F5EEFF" stroke-width="3.5"/>
+      <path d="M57 49 Q60 45 63 49" fill="none" stroke="#F5EEFF" stroke-width="3"/>
+      <path d="M37 45 l5 -4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".7"/><path d="M69 45 l5 -4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+      <!-- PRU wordmark, glitch offset -->
+      <text x="62" y="96" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="19" fill="#FF6FB5">PRU</text>
+      <text x="60" y="94" text-anchor="middle" font-family="'Press Start 2P', monospace" font-size="19" fill="#FFFFFF">PRU</text>
+      <!-- pixel bug (bug reports) -->
+      <g fill="#B8FF5C" transform="translate(92 86)"><rect x="3" y="0" width="2" height="2"/><rect x="9" y="0" width="2" height="2"/><rect x="2" y="3" width="10" height="9" rx="2"/><rect x="0" y="5" width="2" height="2"/><rect x="12" y="5" width="2" height="2"/><rect x="0" y="9" width="2" height="2"/><rect x="12" y="9" width="2" height="2"/></g>
+    </symbol>
+  </defs>
+</svg>
+
+<header>
+  <a class="brand" href="#home"><svg><use href="#ro-mark"/></svg><span><b>Pru's Arcade</b><small>questionable strategies, high scores</small></span></a>
+  <nav>
+    <a href="#home" data-v="home">Home</a>
+    <a href="#mahjong" data-v="mahjong">Mahjong</a>
+    <a href="#word" data-v="word">Word</a>
+    <a href="#sudoku" data-v="sudoku">Sudoku</a>
+    <a href="#solitaire" data-v="solitaire">Solitaire</a>
+    <a href="#match" data-v="match">Match</a>
+    <a href="#trivia" data-v="trivia">Trivia</a>
+  </nav>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="view" id="v-home">
+    <div class="hero">
+      <div class="tape"></div>
+      <svg class="big"><use href="#ro-mark"/></svg>
+      <div>
+        <h1>hey. I'm Pru.<br><em>Player 1. Obviously.</em></h1>
+        <p>I wanted my own arcade, so I built one. Six games, zero chill. If something looks weird, it's a feature. If you beat my score, I'm filing a bug report.</p>
+        <div class="xp"><span id="xp-lv">LV 1</span><span class="bar"><i id="xp-bar" style="width:0%"></i></span><span id="xp-n">0 XP</span></div>
+        <div class="sig">— pru · patch notes v1.0</div>
+      </div>
+    </div>
+    <div class="cards">
+      <a class="gcard" href="#mahjong" style="--c:var(--sage);--cl:var(--sage-l)">
+        <div class="art"><div class="mini">🎮</div><div class="mini">👾</div><div class="mini">⚡</div><div class="mini">👾</div></div>
+        <h3>Pru Mahjong</h3>
+        <p>Clear my loot pile by matching pairs of free tiles. Looks chill. Is not chill.</p>
+        <span class="play">▶ Play</span>
+      </a>
+      <a class="gcard" href="#word" style="--c:var(--mustard);--cl:var(--mustard-l)">
+        <div class="art"><div class="wmini" style="background:var(--sage)">Q</div><div class="wmini" style="background:var(--mustard)">U</div><div class="wmini" style="background:var(--absent)">I</div><div class="wmini" style="background:var(--sage)">L</div><div class="wmini" style="background:var(--sage)">T</div></div>
+        <h3>Pru Word</h3>
+        <p>One five-letter word a day, six lives. Lose your streak and I will notice.</p>
+        <span class="play">▶ Play</span>
+      </a>
+      <a class="gcard" href="#sudoku" style="--c:var(--auburn);--cl:var(--rose-l)">
+        <div class="art"><div class="smini"><span>5</span><span></span><span>3</span><span></span><span>7</span><span></span><span>9</span><span></span><span>1</span></div></div>
+        <h3>Pru Sudoku</h3>
+        <p>Fresh grids on Casual, Ranked or Boss Fight difficulty. Pencil marks included.</p>
+        <span class="play">▶ Play</span>
+      </a>
+      <a class="gcard" href="#solitaire" style="--c:#3DE6FF;--cl:rgba(255,111,181,.12)">
+        <div class="art"><div class="mini" style="width:34px;font-size:14px;font-weight:900;color:#1C1638">A♠</div><div class="mini" style="width:34px;font-size:14px;font-weight:900;color:#E8358A">K♥</div><div class="mini" style="width:34px;font-size:14px;font-weight:900;color:#E8358A">Q♦</div></div>
+        <h3>Pru Solitaire</h3>
+        <p>Classic Klondike, neon deck. Tap a card and it jumps where it belongs. My 3am game.</p>
+        <span class="play">▶ Play</span>
+      </a>
+      <a class="gcard" href="#match" style="--c:#B8FF5C;--cl:rgba(184,255,92,.1)">
+        <div class="art" style="font-size:26px">💖💎⭐🧋🎮</div>
+        <h3>Pru Match</h3>
+        <p>Swap, match three, chain combos. Match four for a line clear, five for a gem bomb. Very satisfying, very loud.</p>
+        <span class="play">▶ Play</span>
+      </a>
+      <a class="gcard" href="#trivia" style="--c:var(--purple);--cl:rgba(155,107,255,.14)">
+        <div class="art" style="font-family:'Press Start 2P';font-size:30px;color:var(--purple)">?!</div>
+        <h3>House Trivia<span class="pill">SOON</span></h3>
+        <p>How well do you know UNREAL? Quick-fire questions after every episode. Unlocks when Season 1 airs.</p>
+        <span class="play">▶ Play</span>
+      </a>
+    </div>
+    <div class="journal">
+      <h3>▸ Your save file</h3>
+      <div class="stats" id="home-stats"></div>
+    </div>
+    <footer>Pru's Arcade · Pru is a Cast Member on <a href="https://www.unreal.show" target="_blank" rel="noopener" style="color:var(--ink);font-weight:800">UNREAL</a> · <a href="https://www.instagram.com/prunakamura.unreal/" target="_blank" rel="noopener" style="color:var(--pink);font-weight:800">@prunakamura.unreal</a>
+    <div style="margin-top:12px"><button class="btn solid" id="install-btn">⬇ Install Pru's Arcade</button></div></footer>
+  </section>
+
+  <!-- MAHJONG -->
+  <section class="view" id="v-mahjong">
+    <div class="gtop">
+      <h2>Pru Mahjong</h2>
+      <div class="ro-says" id="mj-say">Match two free tiles (open on the left or right). Let's gooo.</div>
+    </div>
+    <div class="gtop" style="justify-content:space-between">
+      <div class="meta"><span id="mj-left">84 tiles</span><span id="mj-moves">0 moves</span><span id="mj-time">0:00</span></div>
+      <div class="tools">
+        <button class="btn" id="mj-undo">↶ Undo</button>
+        <button class="btn" id="mj-hint">💡 Hint <span id="mj-hc">(3)</span></button>
+        <button class="btn" id="mj-shuffle">⟳ Shuffle</button>
+        <button class="btn solid" id="mj-new">New game</button>
+      </div>
+    </div>
+    <div id="mj-wrap"><div id="mj-board"></div></div>
+  </section>
+
+  <!-- WORD -->
+  <section class="view" id="v-word">
+    <div class="gtop">
+      <h2>Pru Word</h2>
+      <div class="ro-says" id="w-say">Six lives to guess my word. Mint = right spot, gold = wrong spot. Go.</div>
+    </div>
+    <div class="gtop" style="justify-content:space-between">
+      <div class="tools">
+        <button class="btn on" id="w-daily">Daily #<span id="w-num"></span></button>
+        <button class="btn" id="w-prac">Practice</button>
+      </div>
+      <div class="tools"><button class="btn" id="w-hint">💡 Reveal a letter <span class="ad">AD</span></button></div>
+    </div>
+    <div id="w-grid"></div>
+    <div id="w-kb"></div>
+  </section>
+
+  <!-- SUDOKU -->
+  <section class="view" id="v-sudoku">
+    <div class="gtop">
+      <h2>Pru Sudoku</h2>
+      <div class="ro-says" id="s-say">Every row, column and box gets 1 through 9. No timer pressure, promise.</div>
+    </div>
+    <div class="gtop" style="justify-content:space-between">
+      <div class="meta"><span id="s-mist">0 mistakes</span><span id="s-time">0:00</span></div>
+      <div class="tools">
+        <select class="btn" id="s-diff"><option value="gentle">Casual</option><option value="steady" selected>Ranked</option><option value="tricky">Boss Fight</option></select>
+        <button class="btn solid" id="s-new">New puzzle</button>
+      </div>
+    </div>
+    <div id="s-grid"></div>
+    <div id="s-pad"></div>
+    <div class="s-tools">
+      <button class="btn" id="s-undo">↶ Undo</button>
+      <button class="btn" id="s-erase">⌫ Erase</button>
+      <button class="btn" id="s-notes">✎ Notes: off</button>
+      <button class="btn" id="s-hint">💡 Hint <span id="s-hc">(3)</span></button>
+    </div>
+  </section>
+
+  <!-- SOLITAIRE -->
+  <section class="view" id="v-solitaire">
+    <div class="gtop">
+      <h2>Pru Solitaire</h2>
+      <div class="ro-says" id="sol-say">Tap a card to auto-move it. Tap the deck to draw.</div>
+    </div>
+    <div class="gtop" style="justify-content:space-between">
+      <div class="meta"><span id="sol-moves">0 moves</span><span id="sol-time">0:00</span></div>
+      <div class="tools">
+        <button class="btn" id="sol-undo">↶ Undo</button>
+        <button class="btn" id="sol-hint">💡 Hint <span id="sol-hc">(3)</span></button>
+        <button class="btn" id="sol-auto" style="display:none">⚡ Auto-finish</button>
+        <button class="btn solid" id="sol-new">New deal</button>
+      </div>
+    </div>
+    <div id="sol-felt">
+      <div class="sol-row" id="sol-top"></div>
+      <div class="sol-row" id="sol-tab" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- MATCH -->
+  <section class="view" id="v-match">
+    <div class="gtop">
+      <h2>Pru Match</h2>
+      <div class="ro-says" id="m-say">Swipe or tap two neighbors to swap. Match 3+ to score.</div>
+    </div>
+    <div id="m-hud">
+      <div class="hud"><small>LEVEL</small><b id="m-lv">1</b></div>
+      <div class="hud"><small>SCORE</small><b id="m-score">0</b></div>
+      <div class="hud"><small>TARGET</small><b id="m-target">0</b></div>
+      <div class="hud"><small>MOVES</small><b id="m-moves">0</b></div>
+    </div>
+    <div id="m-prog"><i></i></div>
+    <div id="m-grid"></div>
+    <div id="m-combo"></div>
+    <div class="s-tools">
+      <button class="btn" id="m-hint">💡 Hint <span id="m-hc">(3)</span></button>
+      <button class="btn" id="m-restart">↺ Restart level</button>
+    </div>
+  </section>
+
+  <!-- TRIVIA -->
+  <section class="view" id="v-trivia">
+    <div class="gtop">
+      <h2>House Trivia</h2>
+      <div class="ro-says" id="t-say">I have bug reports on everyone. Let's see if you were paying attention.</div>
+    </div>
+        <div id="t-box"></div>
+  </section>
+</main>
+
+<!-- Banner ad placeholder: swap inner div for your AdSense/AdMob unit -->
+<!-- Banner: UNREAL house ad. Swap for an AdMob/AdSense unit later. -->
+<div id="ad-banner"><a class="promo" href="https://www.unreal.show" target="_blank" rel="noopener">
+  <span class="ur">UNREAL</span>
+  <span class="ptxt"><b>6 Cast Members. 1 glass villa.</b>Only one becomes Most Famous. Season 1 coming soon.</span>
+  <span class="pcta">unreal.show ↗</span></a></div>
+
+<div class="scrim" id="modal"><div class="modal" id="modal-body"></div></div>
+<div id="toast"></div>
+
+<script>
+const RO_ANSWERS=["shiny","shelf","tarts","soups","silky","crown","lilac","cream","house","spool","happy","brush","basil","learn","sugar","mango","radio","thyme","spark","pecan","dream","quilt","camel","cider","cards","notes","poems","craft","story","giant","finch","stars","whale","music","seeds","bagel","vines","fruit","charm","write","knits","verse","sleep","north","rainy","glass","otter","comet","pines","shoes","plant","grape","coats","games","plush","lunar","river","table","orbit","plate","pride","blank","mocha","ocean","songs","llama","petal","hazel","words","windy","night","hobby","drums","olive","roots","cedar","gravy","ghost","frost","woods","yarns","leafy","storm","panda","koala","stems","wafer","smile","sweet","crepe","spell","chair","cabin","today","crush","honey","grove","smart","magic","merry","snowy","couch","raven","laugh","flame","paper","pages","scent","sheep","tunes","paint","zebra","fancy","scone","brave","towel","peach","shore","books","later","plums","blush","guess","early","pizza","quiet","robin","proud","fairy","jelly","light","apron","lamps","amber","spoon","tiger","horse","dance","puppy","cloth","lucky","beach","south","cocoa","woven","salad","bowls","sunny","chess","shirt","melon","cloud","socks","jewel","dress","spice","satin","pearl","flora","color","latte","glove","daisy","creek","donut","fudge","month","skirt","solar","pasta","truth","trust","field","candy","boots","acorn","kitty","scarf","berry","porch","toast","bunny","goose","lemon","bloom","coral","jolly","maple","jeans","knife","apple","linen","bread","tulip","ember","grass","heart","piano"];
+const RO_VALID="aaaahaadmiaamiraaronababaabackabateabbasabbeyabbieabbotabdelabdulabellabhorabideabnerabodeabortaboutaboveabramabreuabujaabuseabyssaccelaccraachedachesacidsackeracornacresactedactinactonactoracuraacuteadageadairadamaadamsadaniadaptaddedadderaddieaddisaddonadelaadeleadeptadieuadiosaditiadleradminadmitadnanadobeadolfadoptadoreadornadriaadultadvilaedesaegisaegonaesopaetnaaffixafireafootaforeafoulafterafzalagainagapeagateagaveagentaggieaggroagileagingagnesagnewagonyagoraagreeahahaaheadahernahhhhahmadahmedahmetaholdaidanaidedaidenaidesaightaikenailesaimedaimeeaipacairedairesaishaaisleakaliakaneakashakbarakersakiraakitaakramakronalainalamoalanaalarmalbanalbeealbinalbumalbusalcoaaldenalderalenaalenealephalertalexaalexialfiealgaealgalalgeraliasalibialicealienalignalikealinaalinealisaalitoalivealkylallahallanallayallenallesalleyallieallinallisalloaallotallowalloyallynaloftalohaalonealongaloofaloudalphaaltaralteralthoaltonaltosalumsalvesalvinalwayalwynamanoamaraamariamaroamassamatoamayaamazeamberambitamboyameeramendamicoamideamigaamigoaminaamineaminoamiraamishamissamityamjadammanammarammonamongamoreamoryamourampedampleamplyamuseamwayanandanbaranderandesandieandreangelangerangieangleangloangryangstangusanhuianikaanimaanimeanionaniseanitaanjouankerankleannanannexannieannoyannulannumanodeanovaansaranselansonantonantsyanvilanwaranzacaortaapaceapartaphidapneaappelappleapplyaprilapronaptlyaqabaarabsarakiarborardenarealareasarenaarentarganargonargosargueargusarianariasarielariesarisearizaarjunarlenarlesarmanarmedarminarmorarndtarniearomaaroraarosearranarrasarrayarronarrowarsedarsesarsonartemarticartieartisartsyarturarubaaryanasadaasahiasamiascapasciiascotaseanashbyashenasherashesashokasianasicsasideaskedaskewaskinaslamaslanaspenassadassamassayassedassesassetassocasterastonastorastraastroasukaatariatholathosatlasatmosatollatomsatoneatticaubryaudenaudioauditaudraaugeraughtaugieaugurauntsauntyauralautosavailavantavastavertaveryavianavilaavivaavoidavrilawaitawakeawamiawardawareawashawaysawfulawokeawwwwaxialaxiomaxlesaxonsayalaayersayresazeriazharaztecazureazusababarbabelbabesbacksbaconbadenbaderbadgebadlybadoobaftabagelbaggybahiabaidubailsbainsbairdbaitsbajajbakarbakedbakerbakesbaldybalesballsballybalmybalsabambabambibanalbancobandabandsbandybanffbangsbanjobanksbantubarakbarbabarbsbarcabardsbaredbaresbargebarksbarnsbaronbarrabarrebarrybarthbartybasalbasedbaselbasesbasicbasiebasilbasinbasisbasrabassobastabastebatchbatesbathebathsbatikbatonbattybauerbawdybayerbayesbayoubazarbeachbeadsbeadybeaksbealebeamsbeansbeardbearsbeastbeatsbeatzbeautbeauxbebopbeccabecksbeckybeebebeechbeefybeepsbeersbeetsbeganbegatbegetbeginbegumbegunbeigebeingbelaybeliebellabellebellibellobellsbellybelowbeltsbenchbendsbendybeninbenjibenjybennybentobenuebereaberetberksberndberneberraberrybertaberthberylbesetbestsbetasbetelbetisbetsybettabettebettsbettybevanbevelbevinbeyerbezelbezosbhattbibbybiblebicepbiddybidenbidetbiggsbightbigotbiharbijoubikerbikesbilalbilbobilgebillsbillybimbobindsbingebingobinksbiomebiotabirchbirdsbirdybirlabirthbisonbitchbiterbitesbittybixbybjorkbjornblackbladeblairblakeblameblancblandblankblareblastblattblazebleakbleedbleepblendblessbligeblighblimpblindblingblinkblissblitzbloatblobsblochblockblocsblogsblokeblondbloodbloombloopbloorblownblowsbluesbluffblumebluntblurbblursblurtblushblythboardboarsboastboatsbobanbobbibobbybodenbodesbodhibodieboersboganbogeyboggsboggybogiebogusbogutboilsboingboisebojanbolanbolesbolinboltsbolusbombsbondibondsbonedbonerbonesboneybongobongsbonnebonnybonusboobsboobybooedbooksboomsbooneboostboothbootsbootyboozeboozyboratboraxboredborerboresborisbornebornoboronboschboscobosombosonbossabossybotchbothabotoxboughboundboutsbowedbowelbowenbowerbowesbowiebowlsboxedboxerboxesboyceboyerboyleboynebracebradybragabraggbragsbraidbrainbrakebrandbrantbrashbrassbratsbraunbravabravebravobrawlbrawnbreadbreakbreambreckbreedbreenbreesbrentbrestbrettbrewsbrianbriarbribebricebrickbricsbridebriefbrienbrillbrinebringbrinkbriskbritebritsbrittbroadbrockbrodybroilbrokebronxbronybroodbrookbroombrothbrownbrowsbrucebruinbrunabrunibrunobruntbrushbrutebryanbrycebubbabucksbuckybuddybudgebuellbuenabuenobuffsbuffybuggybuglebugsybuickbuildbuiltbukitbulbsbulgebulkybullsbullybumpsbumpybunchbundybungabunksbunnybuoysburbsburchburenburghburkaburkeburlyburmaburnsburntburqabursaburstbusanbusbybuschbusesbushybustabustsbustybutchbuttebuttsbutylbuyerbuzzybyersbylawbynesbynumbyrnebyronbytesbyungcabalcabincablecabotcacaocachecacticaddycadetcadizcadrecafescagedcagescageycainecairncairocaiuscajoncajuncakedcakescalebcalifcallecallscallycalmscalumcalyxcamelcameocammycampocampscampycamrycamuscanalcandycanescaniscannacannycanoecanoncantocapercapescappscapracapricapuacaratcarbscardicardscaredcarercarescarewcareycargocarlacarlecarlicarlocarlycarnecarolcaroncarpecarrycartacartecartscarvecasascasedcasescaseycasiocaskscastecastscatchcatercatescathycattycausacausecavancavedcavesceasececilcedarcededcelebceliacellocellsceltaceltscentscerescerrocesarchacochafechaffchaimchainchairchakachalkchampchandchangchantchaoschapochapscharachardcharmcharschartchasechasmchatscheapcheatcheckcheekcheepcheerchefschemochengcheolcherichesschestchevychewschewychibachibichicachickchicochiefchienchikachildchilechilichillchimechimpchinachinechingchinkchinochinschipschirpchloechockchocochoirchokechompchongchopschordchorechosechowkchrischuanchubbchuckchulachumpchumschungchunkchurnchutechynaciaracidercigarciliacillacinchcincocincycindycintacircacirceciscocitedcitescitraciviccivilckingclackclaimclairclampclamsclangclankclansclappclapsclaraclareclarkclaroclaryclashclaspclassclausclawsclayscleanclearcleftcleggclerkcleveclickcliffcliftclimbclineclingclinkclintclipsclivecloakclockclogsclonecloseclothclotscloudcloutcloveclownclubscluedcluesclumpclungclydeclynecoachcoalscoastcoatscobolcobracockscockycocoacocoscodeccodedcodercodescodexcodoncoeurcohancohencoilscoinscokercokescolascolbycoldscolescoleycoliccolincoloncolorcoltscombecombocombscomercomescometcomeycomfycomiccomincommacommecommscompscomteconanconchcondecondicondoconesconeycongacongoconicconorconstconteconticonvoconwycookecookscoolscoonscoopscoorscootecootscopedcopescoralcorbycordscorescoreycorfucorgicorkscorkycornscornycorpscorsacorsecorsocosbycosmocostacostscottacottocouchcoughcouldcountcoupecoupscourscourtcovencovercovescovetcoveycovidcowancowedcowencowercoylecoynecrabbcrabscrackcraftcragscraigcraincrampcranecrankcrapscrashcrasscratecravecrawlcrazecrazycreakcreamcredocreedcreekcreelcreepcremecrepecreptcresscrestcretecrewecrewscribscrickcriedcriercriescrimecrimpcripscrispcrisscristcroakcroatcrocecrockcrocscroftcroixcrokecronecronycrookcropscrorecrosscrowdcrowecrowncrowscrudecruelcrumbcrumpcrushcrustcruzecryincryptcsirocubancubbycubedcubescubiccuddycuetocuffsculpacultscumincuntscuomocupidcuppacurbscurdscuredcurescuriacuriecuriocurlscurlycurrycursecurvecurvycuscocushycutercutiecuttycuzcocybercyclecydiacymrucyndicyniccyrilcyruscystsczechdaddydaegudaeshdaffydafoedafuqdagondailydairydaisydakardalaidalbydalekdalesdaleydaliadalitdallydamesdammedamondanbydancedandydanesdannidannydanskdantedarbydarcydareddarendaresdariadarindariodarkodarladarpadarthdartsdaryldateddatesdattadatumdavaodaveydaviddaviedavisdavosdawesdawnsdayandaynedazeddealsdealtdeanedeansdearsdeathdebbydebitdebradebtsdebugdebutdecafdecaldecaydeccadecksdecordecoydecrydeedsdeemsdeenadeepadeeredeferdefoedegasdeglideiondeitydejandelaydelftdelhideliadelladelledelosdeltadelvedemardemondemosdenchdenimdenisdennydensedentsdenysdepotdepthderbyderekderonderrydesaidesksdeterdetoxdeucedeveldevildevindevondevosdewandewardeweydhabidhakadhonidialsdianadianediarydiceddiceydicksdickydiddydidntdidstdiegodiehldietsdietzdigbydiggsdigitdijondikesdildodillydilmadimerdimesdimlydinahdinardineddinerdinesdingodingsdingydinkadinkydinosdiodediplodiracdirtydiscodiscsdisksditchdittodittydivandivasdiveddiverdivesdivyadixiedixitdixondizzydjingdjinndmingdoanedobbsdobbydocksdoddsdodgedodgydoersdoesndoggodoggydogmadoingdolandolbydolcedolladollsdollydolphdomeddomesdonaldonnadonnedonnydonordonutdookudoorsdoozydopeddopeydorandorendoricdorisdorksdorkydormsdoseddosesdottydoubtdoughdousedoverdovesdoveydowdydowerdownsdownydowrydoyledozeddozendracodraftdragodragsdraindrakedramadrankdrapedrawldrawndrawsdreaddreamdredddregsdressdrieddrierdriesdriftdrilldrinkdripsdrivedroiddroitdrolldronedrooldroopdropsdrovedrowndrugsdruiddrumsdrunkdrurydruzedryerduanedubaiduchyducksduckyductsdudesduelsduetsduffydugandukesdulcedumasdumbodummydumpsduncedunesdunksdunnedunnoduomodupedduperdupesdurandurchdurgadurstduskydustydutchduttaduvalduvetdwarfdwelldweltdwyerdyingdykesdylandysoneagereagleeameseamonearedearleearlsearlyearnseartheasedeaseleaseseasoneateneatereatineatoneavesebertebolaebonyebookecchiecoleeddieedemaedgaredgededgesedicteditheditsedsonedwineerieeeveeeffieefroneggedegypteighteinareinerejectekitielboweldereldonelectelegyelenaelgarelgineliaseliotelisaeliseeliteelizaellenellerellieelliselmerelopeelseselsieeltoneludeelvenelveselvinelviselwayelyseemacsemailembedemberemceeemeryemileemilyemitsemmetemmysemojiemoryemoteemptyenactendedenderendowenemaenemyengelengleenjoyennisennuienochenrolenronensueenterentreentryenuguenvoyepcotepicsepochepoxyepsomepsonequalequiperaseerbilerectericaericherickerikaernieernsterodeerrederrolerroreruptervinerwineshopesperesqueessayessenessexessieesterestesethanetheletherethicethnoethosethyletudeeugeneulereurosevadeevansevenseventeverseverteveryevianevictevilsevitaevokeewaldewartewellewingexactexaltexamsexcelexecsexertexileexistexitsexpatexpelexposextraexudeexxonfaberfabiofablefacedfacesfacetfaciefactofactsfadedfaderfadesfafsafaganfaheyfailsfaintfairefairsfairyfaithfakedfakerfakesfalcofallsfalsefalunfamedfamerfancyfangsfannyfantafarahfarcefaredfaresfargofaridfarisfarmsfaroefarsifartsfastsfatahfatalfatedfatehfatesfattyfatwafaucifaultfaunafaustfavesfavorfavrefaxedfaxesfaziofearsfeastfeatsfecalfecesfedexfedorfeedsfeelsfeelyfeignfeintfelixfelizfellafellsfelonfemmefemurfencefendifenixfentyferalfermifernsferroferryfestafetalfetchfetusfeudsfeverfewerffxivfiberfibreficusfidelfidesfieldfiendfierifieryfifthfiftyfightfiledfilerfilesfiletfilipfillsfillyfilmsfilthfinalfinchfindsfinedfinerfinesfinnsfionafiorefiredfiresfirmafirmsfirstfirthfishyfiskefistsfitchfiverfivesfixedfixerfixesfizzyfjordflackflaggflagsflailflairflakeflakyflameflankflapsflareflashflaskflatsflawsfleasfleckfleesfleetfleshfleurflickflierfliesflingflintflipsflirtfloatflockfloodfloorflopsfloraflossflourflownflowsfloydflufffluidflukeflumeflungflushfluteflybyflyerflyinflynnflyntfoalsfoamsfoamyfocalfocusfoggyfoilsfoldsfolesfoleyfolicfoliofolksfollyfondafontefontsfoodsfoolsfootefootyforayforcefordefordsforexforgeforgoforksformaformeformsforteforthfortsfortyforumforzafossafossefoulsfoundfoursfoxesfoyerfoylefrackfrailframefrancfrankfransfranzfraudfreakfredafredofreedfreerfreesfrerefreshfretsfreudfreyafriarfrickfridafriedfriesfriskfrithfritofritzfrizzfrockfrodofrogsfromefrommfrontfrostfrothfrownfrozefruitfryerfuchsfucksfudgefuegofuelsfuguefullyfumesfundsfungifunkofunkyfunnyfuquafurorfurryfusedfusesfussyfutonfuzzygabbagabbygablegabongaborgachagaffegainsgaiusgalengalesgallegallogamalgamergamesgammagamutgandagandygangagangsganjagarbogardagardegarrygarthgarzagasesgasolgaspsgatedgatesgatorgaudygaugegaulsgaultgauntgaurigaussgauzegavelgavingaylegazedgazesgcsesgearsgearygeckogeeksgeekygeertgeesegeetageicogeistgemmagenesgenetgeniegenjigenoagenregentegentsgenusgeoffgeorggerdagermsgerrygettygetupgeyerghanaghanighatsghazighentghoshghostghoulgiantgibbsgiddygiftsgiggsgildagilesgillsgillygimligimmeginnygipsygirlsgirlygirthgitmogivengivergivesgivingizmogladeglandglansglareglassglazegleamgleanglebeglennglensglialglickglideglintglitzgloatglobegloboglockgloomgloryglossgloveglowsgluckgluedgluesglynnglyphgmailgnatsgnomegoalsgoatsgodingodlygodotgoersgoetzgogolgohangoinggolangoldsgolemgolgigollygomesgomezgonergongsgonnagonzogoochgoodegoodsgoodygooeygoofygoonsgoosegopalgoprogorangordogordygorgegorkygothsgottagottigoudagougegoughgouldgourdgovangowdygowergownsgrabsgracegradegradsgradygraffgraftgrailgraingramsgrandgrantgrapegraphgraspgrassgratagrategravegravygraysgrazegreatgrecogreedgreekgreengreergreetgregggreiggretagreysgridsgriefgriergriffgrigggrillgrimegrimmgrimygrindgrinsgripegripsgristgritsgroangrohlgroingronkgroomgrootgropegrossgroupgroutgrovegrowlgrowngrowsgrubsgruelgruffgruntgrupoguangguanoguardguavagucciguessguestguideguidoguildguileguiltguisegulaggulchgulengullsgullygumbogummygundygunnaguppyguptagurusgustogustsgustygutsygwentgwynngypsygyrushaberhabibhabithackshadenhaderhadeshadidhafizhaganhagarhagenhagerhaguehahahhaidahaifahaighhaikuhailehailshairshairyhaitihakanhakimhalalhalenhaleshaleyhallehallohallshaloshaltshalvehamadhamashamedhamelhamerhamidhammyhamonhamzahandshandyhaneshaneyhangshankshannahanoihantshanzohappyharamhardyharemharesharmsharpsharpyharryharshhartehasanhasnthastahastehastyhatchhatedhaterhateshaulshaunthausahautehavelhavenhaveshavinhavochavrehaweshawkehawkshayathaydnhayekhayeshaynehazelhazenheadsheadyhealshealyheapsheardhearnhearsheartheathheatsheaveheavyhebdohebeiheberhechtheddahedgeheelsheftyhegelheidiheineheinzheirsheisthelenhelgahelixhellahellehellohellshelmshelpshenanhencehennahennyhenrihenryheratherbsherdsheresherodheronheroshershhertshertzhessehettyheuerheunghickshideohideshiggshighshighthijabhikedhikerhikeshilalhildahillshillyhindihindshinduhineshingehintshipaahippohippyhiramhiredhireshirsthissyhitchhiveshmmmmhmonghoardhoarehobbshobbyhocushodgehodorhoferhoffahoganhoguehoisthokeyholdsholedholeshollahollyholstholtzhomerhomeshomeyhomiehommehondahondohonedhoneyhonkyhonorhoochhoodshookehookshoopshootshopedhopeshoppyhoranhordehornehornshornyhorsehorsthortahorushoseahosedhoseshoshihosnihostshotelhotlyhoughhoundhourshousehoverhowdyhoweshowiehowlshoyerhoylehsiaohsiehhsienhttpshuanghubbyhubeihuberhullshulmehumanhumidhumorhumpshunanhunchhunkshunkyhuntshuronhurryhursthurtshuskshuskyhutchhwanghyatthydrahydrohyenahymanhymenhymnshyneshypedhyperhyungibakaibizaibroxibsenicahnicannicingiconsidahoidealideasidentidgafidiomidiotidlibidolsidrisidylliglooignisikedailiadillusimageimamsimbueimgurimplyimraninaneinboxincasincurindexindiaindieindioindraindusineptinertinferinfosinfraingleinigoinkedinlayinletinmaninnerinnesinnitinoueinputinsetinstaintelinterintheintraintroinuitionicipadsipodsipsosiqbaliraniiraqiirateirenaireneirfanirinairishirkedironsironyirvinirwinisaacishiiisiahislamislayislesisletissacissueisuzuitaloitalyitchyitemsivanaivoryiwataizmirizumijabbajabezjacksjackyjacobjadedjadenjafarjaffajaffejagerjahanjailsjaimejainajakesjakobjalanjalenjamaljamesjameyjamiejamiljammujanesjanetjaneyjaniejanisjankojanosjanusjapanjaredjasonjauntjavedjawedjaynejazzyjeansjeepsjellojellyjemmajengajenksjennajennijennyjeongjerezjerksjerkyjerryjerzyjessajessejessijessyjesusjeterjettajettyjeweljewryjiangjiffyjihadjimbojimmyjinksjitsujoannjocksjodiejohanjohnsjohnyjohorjoinsjointjokedjokerjokesjokeyjoliejollajollyjonahjonasjonesjonnyjoongjordijordyjorgejosefjosepjoshijosiejoulejoustjoycejstorjuanajudahjudasjudeajudeojudgejuicejuicyjulesjuliajuliejuliojumbojumpsjumpyjunkojunkyjuntajurisjurorjutsukabirkabulkaceykadrikafkakagankahlokaijukainekalamkaleykamalkamenkamilkampfkamuikanankandikandykanjikantekantokanyekaorikaorukapilkappakaramkarankaratkarelkarenkarimkarinkarlakarmakarnakarolkarstkartskaseykashikasimkathykatiakatiekatjakatyakauaikawhikayakkaylakazankazuokeanekeanukeatskebabkeefekeenekeepskehoekeikokeirakeitakeithkellikellykelsokemalkenaikenankendokenjikennakennykenyakenzokeoghkerenkerrikerrykeshakevankevinkeyedkeyeskhakikhanskhloekhmerkiarakickskiddokiddykierakildakillakillskilnskiloskiltskimmykindakindskingskinkskinkykioskkiowakirankirbykirinkissykiteskittskittykiwisklaraklauskleinklimtklinekloppklosskmartknackknappknavekneadkneedkneelkneesknellkneltknickknifeknitsknobsknockknollknopfknotsknottknownknowskoalakochikodakkogankohlikondokookykorankoreakorrakotorkovackrabskraftkrauskrazykrebskremekriegkrillkrollkronekrooskruppkrusekualakudoskumarkunalkuniskunstkurdskurtzkwamekwangkwongkyliekyokokyotokyriekyunglabanlabellabialaborlacedlaceslaceylacksladenladlelagerlagoslaheylailalainelainglairdlaitylakerlakeslakhslallylamarlamaslambolambslampslancelandolandslandylaneslaneylangelankalankylannylanzalapellapislapselarchlargelargolarkslarrylaruelarvalaserlasiklasselassolastslatchlaterlatexlathelatiflatinlattelaudalaudelaudslauerlaughlauralaurilavallaverlaweslawnslaxmilayedlayerlaylalaynelayuplazarlazerlazioleachleadsleafsleafyleahyleakeleaksleakyleannleansleantleapsleaptlearnlearyleaseleashleastleavelebenlecheledgeleechleedsleeksleelaleeryleftsleftylegallegerleggylegialegitlegosleicaleighleilaleithlemmalemmelemmylemonlemurlendsleninlennylenoxleonaleoneleongleperleroylestelettslettyleungleveelevellevenleverlevinlevislevonleweslewinlewislexielexislexusleylaleytelgbtilgbtqlhasalianaliangliarslibbylibelliberliborlibralibrelibrolibyalickslidarlidialiegelienslieutliferlifesliftslightliguelikedlikenlikeslikudlilaclillelillylimbolimbslimeslimitlimoslindalindelindolindylinedlinenlinerlineslingolinkslinkylinuslinuxlionslipidlislelissalistslisztliterlithelitrelivedlivenliverliveslivialividlivinlivrelizzyllamalloydlmfaoloachloadsloansloathlobbylobedlobesloboslocallockelockslocoslocumlocuslodgeloftsloftyloganlogiclogieloginlogosloguelohanloinsloirelollylolollomaslomaxlonerlongolongslonzolooksloomsloonsloonyloopsloopylooselopeslopezloraslorcalordelordslordylorenlornalornelorryloserloseslottalottelottolotusloughlouielouislouselousylouthlovedloverlovesloveylovinlowerloweslowlylowryloyalluanglucanlucasluccaluchalucialucidlucielucioluckyluffylugarlugerluigiluisalukaslumenlumialumpslumpylunarlunchlundylungelungslupinlupuslurchluredluresluridlurielurkslustslustylutonluxorluzonlyalllycralydialyelllyinglyleslymanlymphlynchlyndalynnelyonslyriclysismabelmacaomacaumachemachimachomachumaconmacosmacromadammadanmaddymadeamadgemadhumadlymadremaedamaevemafiamagdamageemagesmaggimagicmagmamagnamagusmahalmahanmahdimahermahonmaidsmaiermailsmainemainsmainzmaizemajidmajormakermakesmakinmalaymalekmalesmaliamalikmalinmallsmalmomaltamamasmambamambomamiemammamammymancemandamandimandymanesmanetmangamangemangomaniamanicmanlymannamannymanojmanonmanormansemantamanusmaorimaplemaratmarcamarchmarcomarcymardimarekmarenmaresmargemargomariamariemarinmariomarismarkomarksmarkymarlamarlomarnemarrymarshmartamartemartimartymarysmasaimashamasksmasonmassamassemastsmatchmatedmateomatermatesmateymathsmaticmattemattimattymaudemaunamauramauromaurymauvemavenmavismaxedmaxiemaximmayanmaybemayermayesmaynemayormazdamazesmbekimccawmccoymcflymcgeemckaymckeemcraemcveymeademealsmealymeansmeantmearsmeathmeatsmeatymeccamechamedalmedanmedeamediamedicmeeksmeenameerameetsmeganmegynmehdimehtameiermeijimejiamelbameleemellomelonmeltsmemesmemosmenlomenonmensamenusmerchmercimerckmercymergemeritmerlemerrymerylmessimessymesutmetalmetedmetermetoometremetromeusemeyermezzomiamimiatamicahmickymicromidasmidgemidstmightmigosmikelmikesmikeymilanmilermilesmileymilfsmilksmilkymillamillemillimillsmillymilnemilosmimicminajminasmincemindsmindyminedminerminesmingominisminnaminorminotminskmintomintsmintymintzminusmiraimiredmirnamirthmirzamisermisesmishamissamissymistsmistymitchmitesmitramitremittsmitzimiuramixedmixermixesmmmmmmoanamoansmobilmochamochimocksmodalmodelmodemmodesmodusmogulmohanmoiramoistmolarmoldsmoldymolesmollymommamommymondemondomonetmoneymongomonksmontemonthmontimontymonzamoochmoocsmoodsmoodymoonsmooremoorsmoosemopedmoralmoranmoraymorelmoresmoreymoriamorinmoronmorphmorromorsemorsimortemortymosbymosermosesmoshemoshimossymosulmotelmothsmotifmotormottamottemottomouldmoundmountmournmousemouthmovedmovermovesmoviemovinmowedmowermoxiemoyermoyesmsnbcmtdnamuchomucusmuddymuftimuggymulanmulchmulesmultimumbomummymumpsmunchmundimundomundymungomunirmunozmunromuradmuralmuratmurkymurphmusedmuseomusesmushymusicmusikmuskymustymutedmutesmuttsmyersmylesmyrnamyronmyrrhmysqlmythsmyungnaacpnabilnachonadalnadernadianadirnaftanagarnagelnaglenaidunailsnairanairnnaitonaivenajafnajibnakednamconamednamesnancenancynandanandinandonannanannynaominappynarconasalnasirnasrinastynatalnatsunattynaurunavalnavasnavelnavernawabnawaznazirnazisnealenearsneathnecksneedsneedyneelynegannegevnegranegronehruneighneillnellanellenellynepalnerdsnerdynervenessanestsneuerneuronevernevesnevinnevisnewernewlynewrynexusnhtsaniallniamhnicernichenichtnickinicksnickynicolniecenielsnietoniftynigelnigernigganightnigranihonnikkinikkonikonnikosnilesnillynimmonimoyninesninjaninthniqabnishanitinnitronittyniveanivennixonnizamnobelnoblenochenodalnodesnoidanoirenoisenoisynokianolannomadnoncenoobsnooksnoonanoonenoooonoosanoosenoradnorahnormanormsnorsenortenorthnosednosesnoseynotchnotednotesnotrenottsnounsnovaknovelnovusnowaknoyesnubianudesnudgenuevanuevonukesnumannunesnuneznursenusranuttynylonnymphnyssaoakesoasisoatesoathsobamaobeseobeysocalaoccuroceanochoaochreoddlyodellodeonodileodorsodourofcomoffalofferoftenoftheogdenogresohhhhoiledokadaoldenolderoldieoliveollieolneyolsenolsonomaghomahaomaniombreomegaomensomitsomniaoniononsetoomphoooohoozesopensoperaopiumoprahoptedopticoptusorangorbanorbisorbitorcasorderorealoreosorganorielorigiorionorisaorlovorrinorsayorsonorthoortizortonosageosakaosamaoscaroskarosmanosterotagootakuotherotteroughtouijaounceoutdooutedouteroutroouttaovalsovaryovateovensoversovertovoidowensowingownedowneroxfamoxideoxleyozarkozawaozoneozziepablopabstpacedpacerpacespaceypachapackspactspaddypadmapadrepaduapaeanpaganpagedpagerpagespagetpaigepainepainspaintpairspalaupaleopalerpalespaleypalinpallypalmapalmepalmspalospalsypandapanelpanespangspanicpannapansypantopantspantypaolapaolopapalpapaspaperpappupappypapuaparamparaspardoparedparisparkaparkeparksparmaparraparryparsepartepartipartspartypascopaseopashapassepastapastepastspastypatchpatelpaterpathspatilpatiopatnapatonpatsypattipattypaulapaulipaulopaulspaulypausepavedpavelpavespawanpawnspayedpayerpayinpaynepeacepeachpeakepeakspeakypealepearlpearspeasepeasypecanpecospedalpedropeekspeelepeelspeepspeerspeetapeevepeggypekkapellepeltspenalpencepenispennepennypentapeonypeppapeppypepsipepysperakperceperchpercyperesperezperilperksperkyperlapermaperotperryperthpeskypesospestopestspetalpetcopeterpeteypetitpetrapetripetropettyphagepharmphasephilophishphnomphonephonyphotopianopickspickypiecepieropierspietypiggypikespilarpiledpilespillspilotpimpspinchpinespineypingspinkspinkypinotpinoypintopintspinuspiotrpiouspipedpiperpipespippapiquepirespiriepirlopissypitchpithypittapittspivotpixarpixelpixiepizzaplaceplaidplainplaitplaneplankplanoplansplantplataplateplathplatoplattplayaplaysplazapleadpleasplebspleinpliedpliesplinyplotsplowspluckplugsplumbplumeplumpplumsplushplutopoachpocuspoemspoetspogbapoguepointpoisepokedpokerpokespokeypolarpolespoliopolispolkapollopollspollyponcepondspontaponteponzipoochpoojapoolepoolspoopspoopypopespopovpoppapoppypopupporchporesporkypornoportaporteportoportsposedposenposerposesposeypositpossepostspotropottspottypotuspouchpoundpourspowerpowyspradapradopraiaprankprattprawnprayspredspreetprepspresspreyspriceprickprideprimaprimeprimoprintprionpriorpriseprismpriusprivypriyaprizeprobeprobsprofspromopromsproneprongproofpropsproseprostprotoproudproveprovoprowlproxyprudepruneprycepryorpsalmpsychpubespubicpuccipuckspudgypuffspuffypugetpukedpulispullspulsepumaspumpspunchpunicpunkspuntapuntspupilpuppypurdypureepurerpurgepurimpurrspursepushapushypussyputinputtsputtypygmypylonpyotrpyrexqadriqaedaqaidaqasimqatarquackquadsquaidquailquakequangquantquarkquartquashquasiquaysqueenqueerquellqueryquesoquestqueuequickquietquillquiltquinnquintquipsquirkquitequitoquitsquoraquotaquotequranrabatrabbirabidrabinracedracerracesracksradarradekradharadiiradioradonraftsragedragerragesraghurahimrahulraidsrailsrainarainerainsrainyraiseraithrajahrajanrajivrajyarakedrakesrallyralphramanramboramenramonramosrampsranceranchrandirandyrangeranksrantsraoulrapedrapesrapidraqqararerraspyrastaratedratesratioratnaratonrattyravedravelravenravesrawlsrayedraynerayonrazakrazedrazerrazorreachreactreadereadsreadyrealmrealsrealyreamsrearsrebarrebelrebusrebutrecaprecepreconrecurreddyredmiredoxreduxreecereedsreedyreefsreeksreelsreesereevereferrefitregalreganregenregisrehabreichreignreikireimsreinareinsreissrelaxrelayrelicremitremixremusrenalreneerenewrentsrenzirenzorepayrepelreplyreposrerunresetresinrestorestsretroretryreuserevelrevisrevuereyesreynarhettrhinerhinorhodarhoderhonerhymericanriccirichericinrickiricksrickyricohriderridesridgeridinriffsrifleriftsrigbyriggsrightrigidrigorrikerrikkiriledrileyrimesringoringsrinksrinseriojariotsripenriponrisenriserrisesrishirisksriskyritesrivalrivasrivenriverrivetrizalrizzoroachroadsroaldroamsroarkroarsroastrobborobbyrobedrobesrobinrobotrobynroccaroccorocharocherocksrockyroddyrodenrodeorodinroganrogenrogerroguerohanrohitrojasrolesrolexrolferollarollorollsromanromeoromerronanrondarondoroninronnyroofsrooksroomsroomyroostrootsropedroperropesroquerosenrosesrosierosinrossirossorotorrouenrougeroughroundrouseroushrouteroverrowanrowdyrowedrowerroxasroxieroyalroycerspcarubenrubinrubiorubleruddyrufusrugbyrugerruinsruledrulerrulesrumbarumorrunesrungsrunnyrupeeruralrusevrussorustyryderryzensaarcsabahsabansabersabhasabinsablesabrasabresaccosachasachssackssacrasadatsadiesadiqsadlysaeedsafersafessagansagarsagassagersagessaggysahebsahelsahibsailssaintsaithsaitosajidsakaisakessakhosaladsalahsalamsalassalehsalemsalessalimsallesallysalmasalonsalsasaltssaltysaludsalvasalvesalvosamarsambasambosamirsammysamoasamussanaasandisandssandysanflsanghsansasantasantisantosappysarahsaransareesargesarinsarissashasassysatansatedsatinsatyasatyrsaucesaucysaudisauersaultsaunasautesavedsaversavessavinsavorsavoysavvysawedsaxonsayedsayersayinsayrescabsscalascalescalpscalyscamsscansscantscapescarescarfscarsscaryscenescentscifiscionscoffscoldsconescoopscootscopescorescornscotsscottscourscoutscowlscrapscrewscrimscripscrubscrumscubascuffsealesealsseamssearsseatssectssedansederseedsseedyseeinseeksseemaseemsseepsseerssegalsegueseikoseineseitzseizesekaiselahselbyseligselimsellsselmasemensemissendssennasenorsenseseongseoulsepiaseptaserbsserfssergeserieserifserraserumserveservosethisetonsetupseungseusssevenseversewedsewersexedsexesshackshadeshadyshaftshakashakeshakyshaleshallshaltshameshamishamsshanashandshaneshangshanishankshapeshardsharesharisharksharpshaunshaveshawlshawnsheafshearshebashedssheensheepsheersheetsheikshelfshellshengsherishhhhshiasshibashiedshiftshikishillshineshingshinnshinsshinyshippshipsshireshirkshiroshirtshiteshitsshivashoalshockshoesshonashoneshookshootshopsshoreshornshortshotsshoutshoveshownshowsshowyshredshreeshrekshrewshrubshrugshuntshurashureshushshutsshyamshylysibylsickosidedsidessidonsiegesienasievesighssightsigmasignssikessikhssilassilkssilkysillssillysilossilvasimbasimmssimonsinaisincesindhsingesinghsingssinhasinkssinussiouxsippysiredsirensiressiskosissysitarsitedsitessitkasivansixessixthsixtysizedsizesskankskateskeetskidsskiedskierskiesskiffskillskimpskinsskintskipsskirtskitsskodaskullskunkskypeslabsslacksladeslagsslainslamsslangslantslapsslashslateslatsslaveslavsslayssledssleeksleepsleetsleptsliceslickslidesligoslimeslimyslingslipsslitssloansloopslopeslothslotsslowsslugsslumpslumsslungslurpslursslushslutsslylysmacksmallsmartsmashsmaugsmearsmellsmeltsmilesmirksmitesmithsmoaksmocksmokesmokysmurfsmutssmythsnacksnafusnagssnailsnakesnapesnapssnaresnarksnarlsneaksneersnellsnidesniffsnipesnobssnooksnoopsnoresnortsnoutsnowssnowysnucksnuffsoakssoapssoapysoarssobelsobersobresocalsochisociosockssodassodomsofassofiasofiesoggysoilssolarsolessolidsolissollysolonsolossolvesommesonamsonarsongssoniasonicsonjasonnysonossonyasoooosootysorensoressorossorrysortasortssottosoulesoulssoundsoupssousasouthsouzasowedsoyuzspacespadespainspakespankspanssparesparksparsspasmspatespatsspawnspeakspearspeckspecsspeedspeerspellspeltspendspentspermspewsspicespicyspiedspielspiesspikespikyspillspiltspinaspinespinsspinyspirespirospitespitsspitzsplatsplitspockspoilspokespoofspookspoolspoonsporesportspotsspoutsprayspreesprigspudsspunkspursspurtspyrosquadsquatsquawsquidsrslyssrisstabsstackstacystadestaffstagestaggstagsstahlstaidstainstairstakestalestalkstallstampstandstankstansstaphstarcstarestarkstarrstarsstartstarzstashstasistatestatsstavestayssteadsteakstealsteamsteedsteelsteensteepsteersteinstemsstentstephstepssternstevestewssteynstickstiffstillstinestingstinkstintstipestirsstockstoicstokestolestollstompstonestonystoodstoolstoopstopsstorestorkstormstorystottstoutstovestowestrapstratstrawstraystrepstripstromstrumstrutstubsstuckstudsstudystuffstumpstungstunsstuntsturmsturtstylesuavesuckssuckysucresudansuedesugarsuggssuingsuitesuitssullasullysumersummasunilsunnisunnysupersuprasurahsurajsuratsurgesurlysurrysuryasusansushisusiesutersutrasuzieswabsswainswamiswampswamyswankswannswansswapsswarmswathswaysswearsweatswedesweepsweetswellsweptswiftswimsswineswingswipeswirlswishswissswoonswoopswordsworeswornswungsybilsykessynchsyncssynodsynthsyrahsyriasyruptabbytabertabletabootabortacittackstackytacostaffytahirtahoetaigataijitailstainttajiktakeitakentakertakestakintalestaliatalibtalkstallytalontamantamartamedtamertamiltamirtammytampatandytangotangytaniatankstantotanyatapastapedtapertapestarantardytarektariktariqtarottarrytartetartstaryntasertashataskstastetastytatartatertattstatumtaunttaupetawnytaxedtaxestaxistaxonteachteamstearstearyteasetebowtechsteddyteensteenyteethtegantelcotellstellytelustempetempotempstempttendstenettenortensetenthtentstepidtermsternsterraterreterriterrytersetescoteslatessatestateststestytetontetrateveztexantexastextsthabothaisthanethangthanhthanithankthanxthatsthefttheirthemetheontherethesethetathiccthickthiefthielthierthighthinethingthinkthinsthirdthongthornthorpthosethreethrewthrobthrowthugsthulethumbthumpthunkthursthymetiagotianatiaratibertibettibiatickstidaltidestierstigertighttigretikkatildatiledtilestillstillytiltstimedtimertimestimextimeytimidtimmytimontimortimurtingetintotintstiogatippytipsytiredtirestitantithetitletittytitustoadstoasttobeytobintodaytoddytodostoewstokentokiotokyotollstomartomastombstomestommytonaltonedtonertonestongatongstonictonnetontotonyatoolstoonstoothtootstopaztopictoppstopsytorahtorchtorretorsotortstorustoscatotaltotemtotestottitouchtoughtouretourstoutstowedtoweltowertownetownstoxictoxintoyedtracetracitracktracttracytradetrailtraintraittramptramstrangtranstrapptrapstrashtrasktrawltraystreadtreattreestrekstrendtrenttriadtrialtribetricetricktriedtriertriestriketrilltrimstrinatrinetrinitriostripetripptripstrishtritetroistrolltrooptropetrotstrotttrouttrovetrucetrucktrudytruertruextrulytrumptrunktrurotrusstrusttruthtryintrynatryontrysttsangtsengtsungtubaltubbstubbytubertubestuckstudortuftstuliptulletullytulsatulsitummytumortunedtunertunestunictunistupactupleturanturboturdsturinturksturnsturvytuskstutortutsituttitwaintwangtwatstweaktweedtweentweettwerktwicetwigstwilltwinetwinktwinstwirltwisttychotyingtylertypedtypestypostyreetyrestyroltysontywinuconnudalluhhhhuhuruulcerultraumassummahummmmuncleuncutunderundidundueunfitungerunhcrunifyunionuniteunitsunityunlitunmetunrwaunseeunserunsubuntieuntilunwedunwinunzipuphamuppedupperupsetuptonuralsurbanurgedurgesuriahuribeurielurineusageusagiusaidusainusersusherusingusmanusualusurpusuryuteroutheruticautleyuttarutteruzbekvadervadimvaguevaletvalidvallevallivalorvaluevalvevamosvampsvancevandyvannavanyavapidvaporvardyvargavarmavarnavarunvarusvascovasesvaultvedasvedicveersveganvegasveilsveinsvelezvellavelmavenmovenomventiventsvenuevenusverbsverdeverdivergevermavernaverneversaverseversovervevespavestavestsvexedvialsvibervibesvicarvicesvichyvickivickyvidalvideovidyaviejovieuxviewsviggovigilvigorvijayvikasvillavillevimeovincevincivinesvinnyvinodvinylviolaviperviralviratvirgovirusvisasvisitvisorvistavitaevitalvitrovivekvividvivrevixenvlogsvocabvocalvodkavogelvoguevoicevoidsvoigtvoilavolesvolgavoltavoltevoltsvolvovomitvotedvotervotesvouchvowedvowelvriesvroomvulvavyingwaaaywackywadedwaferwagedwagerwageswaggawagonwahoowaifuwailswaistwaitewaitswaivewakeswaldowaleswalidwalkswallawallswallywalshwaltzwandawandswanedwannawantswardswareswarmswarnewarnswarpswarsiwartswashywasntwaspswastewatchwaterwattswaughwavedwaverwaveswaxedwaxeswaynewayyywearswearyweaveweberwebmdwedgeweedsweeksweepsweiboweighweillweirdweisswelbywelchweldswellswelshwenchwendywentzwestswhackwhalewharfwhatswheatwheelwhelpwherewhichwhiffwhigswhilewhimswhinewhinywhipswhirlwhiskwhistwhitewhizzwhoahwholewhoopwhorewhorlwhosewhytewiccawickswidenwiderwidowwidthwieldwierdwifeswifeywiganwightwilcowildewildswileswileywilkswillawilliwillswillywilmawimpywincewinchwindswindywineswingswinkswinkywipedwiperwipeswiredwireswirthwiserwishywispswispywitchwittewittywiveswokenwolfewolffwomanwomenwonkawonkywoodswoodywooedwoolfwoolywoopswoozywordswordyworksworldwormsworryworseworstworthwouldwoundwovenwowedwrapswrathwreakwreckwrestwringwristwritewritswrongwrotewrylywuhanwyattwyethwyliewymanwynnexanaxxeniaxenonxeroxxhakaxhosaxiangxviiixxiiiyachtyadavyaddayahooyahyayaltayanksyardsyarnsyarrayasiryatesyatrayawnsyazooyearnyearsyeastyeatsyeezyyellsyemenyeongyesssyeungyieldyikesyoderyohanyolksyongeyorkeyorksyosefyoshiyoullyoungyoureyoursyouthyouveypresyuccayuckyyukonyuliayummyyunusyusefyusufzackszafarzahirzahrazairezakirzamanzandtzappazayedzebrazeisszeldazenitzeroszestyzetaszhangzhengzhongziggyzilchzippozippyzonalzonedzoneszooeyzoomszoranzorrozumbazweigzynga";
+
+</script>
+<script>
+"use strict";
+/* ============================================================
+   CONFIG — ad hooks. Replace the placeholder functions with your
+   ad network SDK calls (Google AdSense / Ad Manager on web,
+   AdMob via Capacitor when wrapped as an iOS/Android app).
+   ============================================================ */
+const ADS = {
+  enabled: true,
+  freeHintsPerGame: 3,       // after these, hints require a rewarded ad
+  interstitialEvery: 2,      // show an ad break after every Nth finished game
+};
+let finishedGames = 0;
+
+/* ---------- utils ---------- */
+const $ = s => document.querySelector(s);
+const rnd = n => Math.floor(Math.random()*n);
+const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const fmt = s => Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem("pru."+k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem("pru."+k,JSON.stringify(v)); }catch(e){} }
+};
+let toastT;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),1800); }
+function modal(html){ $("#modal-body").innerHTML=html; $("#modal").classList.add("on"); }
+function closeModal(){ $("#modal").classList.remove("on"); }
+
+/* ---------- ad placeholders ---------- */
+const PROMO=()=>`<div class="promo-card"><div class="from">FROM THE SHOW</div><div class="ur">UNREAL</div>
+  <p>Six Cast Members. One glass villa in the Hollywood Hills.<br>Only one becomes Most Famous.</p>
+  <div class="names">Sienna · Marcus · Pru · Julian · Ro · Atlas</div>
+  <div class="soon">SEASON 1 COMING SOON</div>
+  <div class="row"><a class="btn" href="https://www.unreal.show" target="_blank" rel="noopener">unreal.show ↗</a><a class="btn" href="https://www.instagram.com/unrealtheshow/" target="_blank" rel="noopener">@unrealtheshow</a></div></div>`;
+// Rewarded slot: currently an UNREAL house promo. Replace with a rewarded ad SDK call later.
+function showRewardedAd(onReward){
+  if(!ADS.enabled){ onReward(); return; }
+  modal(`<div class="hand bigsig">power-up detected</div><h3>Quick word from our show</h3>${PROMO()}
+    <div class="pcount" id="ad-c">Power-up unlocks in 5…</div>
+    <div class="row"><button class="btn" id="ad-x">No thanks</button><button class="btn auburn" id="ad-ok" disabled>Claim power-up</button></div>`);
+  let n=5; const iv=setInterval(()=>{ n--; const c=$("#ad-c"); if(c) c.textContent=n>0?`Power-up unlocks in ${n}…`:"Power-up ready ✓"; if(n<=0){clearInterval(iv); const b=$("#ad-ok"); if(b) b.disabled=false;} },1000);
+  $("#ad-x").onclick=()=>{clearInterval(iv);closeModal();};
+  $("#ad-ok").onclick=()=>{closeModal();onReward();};
+}
+// Ad break between games: currently an UNREAL house promo. Replace with an interstitial ad later.
+function maybeInterstitial(then){
+  finishedGames++;
+  if(!ADS.enabled || finishedGames % ADS.interstitialEvery !== 0){ then(); return; }
+  modal(`<h3>Loading next level…</h3>${PROMO()}
+    <div class="pcount" id="ad-c2">Continue in 3…</div>
+    <div class="row"><button class="btn solid" id="ad-go" disabled>Continue ▶</button></div>`);
+  let n=3; const iv=setInterval(()=>{ n--; const c=$("#ad-c2"); if(c) c.textContent=n>0?`Continue in ${n}…`:""; if(n<=0){clearInterval(iv); const b=$("#ad-go"); if(b){b.disabled=false;}} },1000);
+  $("#ad-go").onclick=()=>{closeModal();then();};
+}
+
+/* ---------- Pru's voice ---------- */
+const RO = {
+  win:["GG. Filing a bug report: you're too good.","Okay, that was clean. Don't let it go to your head.","Clipping that for my stream. You're welcome.","Achievement unlocked: main character."],
+  oops:["Bug report: that one's locked. Pick a free one.","Miss. Filing that under \"not my fault.\"","Nope. That's lag. I'm blaming the render."],
+};
+const pick = a => a[rnd(a.length)];
+
+/* ---------- stats ---------- */
+function addXP(n){ const s=store.get("stats",{}); const before=Math.floor((s.xp||0)/200); s.xp=(s.xp||0)+n; store.set("stats",s);
+  const after=Math.floor(s.xp/200); setTimeout(()=>toast(after>before?`LEVEL UP! You're LV ${after+1}`:`+${n} XP`),150); renderHome(); }
+function bump(key,xp){ const s=store.get("stats",{}); s[key]=(s[key]||0)+1; store.set("stats",s); addXP(xp||100); }
+function renderHome(){
+  const s=store.get("stats",{}), w=store.get("word",{});
+  const xp=s.xp||0; $("#xp-lv").textContent="LV "+(Math.floor(xp/200)+1); $("#xp-n").textContent=xp+" XP"; $("#xp-bar").style.width=((xp%200)/2)+"%";
+  $("#home-stats").innerHTML=`<span>Mahjong clears <b>${s.mj||0}</b></span><span>Word streak <b>${w.streak||0}</b></span><span>Sudoku solved <b>${s.su||0}</b></span><span>Solitaire wins <b>${s.sol||0}</b></span><span>Match level <b>${store.get("matchLevel",1)}</b></span><span>Trivia best <b>${store.get("triviaBest",0)}</b></span>`;
+}
+
+/* ============================================================
+   RO MAHJONG
+   ============================================================ */
+const MJ = (()=>{
+  const KINDS = ["🎮","🕹️","👾","🎧","💖","⭐","🍓","🧋","🍜","🐱","🌙","⚡","🦄","🍩","🎀","💎","🍄","🔮","🌈","🪐","🍒"];
+  // Pyramid layout: 48 + 24 + 8 + 4 = 84 tiles (21 kinds x 4)
+  const LAYOUT=[];
+  const block=(l,c0,c1,r0,r1)=>{ for(let r=r0;r<=r1;r++) for(let c=c0;c<=c1;c++) LAYOUT.push({l,c,r}); };
+  block(0,0,7,0,5); block(1,1,6,1,4); block(2,2,5,2,3); block(3,3,4,2,3);
+  let tiles=[], sel=null, hist=[], moves=0, hints=0, t0=0, timer=null, elapsed=0, done=false;
+  const K=(l,c,r)=>l+","+c+","+r;
+
+  function freeIn(p,set){
+    if(set.has(K(p.l+1,p.c,p.r))) return false;
+    return !set.has(K(p.l,p.c-1,p.r)) || !set.has(K(p.l,p.c+1,p.r));
+  }
+  // Reverse-build deal: guarantees the layout is solvable.
+  function deal(positions, pairKinds){
+    for(let attempt=0; attempt<500; attempt++){
+      const set=new Set(positions.map(p=>K(p.l,p.c,p.r)));
+      const kinds=shuffle(pairKinds.slice()); const out=new Map(); let ok=true;
+      for(const k of kinds){
+        const free=positions.filter(p=>set.has(K(p.l,p.c,p.r)) && freeIn(p,set));
+        if(free.length<2){ ok=false; break; }
+        // prefer higher layers to avoid painting into a corner
+        free.sort((a,b)=>b.l-a.l || Math.random()-.5);
+        const pool=free.slice(0, Math.max(2, Math.ceil(free.length*0.6)));
+        const a=pool[rnd(pool.length)];
+        // both tiles must be free at the same time (as they will be when played)
+        const others=free.filter(p=>p!==a);
+        const b=others[rnd(others.length)];
+        set.delete(K(a.l,a.c,a.r)); set.delete(K(b.l,b.c,b.r));
+        out.set(K(a.l,a.c,a.r),k); out.set(K(b.l,b.c,b.r),k);
+      }
+      if(ok) return out;
+    }
+    return null;
+  }
+  const presentSet=()=>new Set(tiles.filter(t=>!t.gone).map(t=>K(t.l,t.c,t.r)));
+  const isFree=t=>freeIn(t,presentSet());
+
+  function newGame(){
+    const pairs=[]; KINDS.forEach(k=>{pairs.push(k,k);});
+    const m=deal(LAYOUT,pairs);
+    tiles=LAYOUT.map((p,i)=>({id:i,...p,kind:m.get(K(p.l,p.c,p.r)),gone:false}));
+    sel=null; hist=[]; moves=0; hints=0; elapsed=0; done=false;
+    clearInterval(timer); timer=setInterval(()=>{ if(!done && location.hash==="#mahjong"){ elapsed++; $("#mj-time").textContent=fmt(elapsed);} },1000);
+    $("#mj-time").textContent="0:00";
+    $("#mj-say").textContent="Match two free tiles (open on the left or right). Let's gooo.";
+    render();
+  }
+  function size(){
+    const W=$("#mj-wrap").clientWidth-24;
+    const w=Math.max(30,Math.min(66,(W-14)/8.25));
+    return {w,h:w*1.3,d:Math.max(3,w*0.1)};
+  }
+  function render(){
+    const b=$("#mj-board"); const {w,h,d}=size();
+    b.style.width=(8*w+8)+"px"; b.style.height=(6*h+10)+"px";
+    const set=presentSet();
+    b.innerHTML="";
+    tiles.filter(t=>!t.gone).sort((a,b)=>a.l-b.l||a.r-b.r||a.c-b.c).forEach(t=>{
+      const el=document.createElement("div");
+      el.className="tile"+(freeIn(t,set)?"":" blocked")+(sel===t.id?" sel":"");
+      el.style.cssText=`left:${t.c*w - t.l*d + 4}px;top:${t.r*h - t.l*d + 6}px;width:${w-2}px;height:${h-2}px;font-size:${w*0.55}px;z-index:${t.l*100+t.r*10+t.c}`;
+      el.innerHTML=`<span>${t.kind}</span>`; el.dataset.id=t.id;
+      el.onclick=()=>click(t.id,el);
+      b.appendChild(el);
+    });
+    const left=tiles.filter(t=>!t.gone).length;
+    $("#mj-left").textContent=left+" tiles"; $("#mj-moves").textContent=moves+" moves";
+    $("#mj-undo").disabled=!hist.length;
+    const free=Math.max(0,ADS.freeHintsPerGame-hints);
+    $("#mj-hc").innerHTML=free?`(${free})`:`<span class="ad">AD</span>`;
+  }
+  function click(id,el){
+    if(done) return;
+    const t=tiles[id];
+    if(!isFree(t)){ el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); $("#mj-say").textContent=pick(RO.oops); return; }
+    if(sel===null){ sel=id; render(); return; }
+    if(sel===id){ sel=null; render(); return; }
+    const s=tiles[sel];
+    if(s.kind===t.kind){
+      s.gone=t.gone=true; hist.push([s.id,t.id]); moves++; sel=null;
+      render(); afterMove();
+    } else { sel=id; render(); }
+  }
+  function availablePairs(){
+    const set=presentSet(), by={};
+    tiles.filter(t=>!t.gone && freeIn(t,set)).forEach(t=>{(by[t.kind]=by[t.kind]||[]).push(t);});
+    return Object.values(by).filter(a=>a.length>=2).map(a=>[a[0],a[1]]);
+  }
+  function afterMove(){
+    const left=tiles.filter(t=>!t.gone).length;
+    if(!left){
+      done=true; bump("mj");
+      setTimeout(()=>modal(`<svg style="width:72px;height:72px"><use href="#ro-mark"/></svg><h3>STAGE CLEAR!</h3>
+        <p>${moves} moves in ${fmt(elapsed)}.</p><div class="bigsig">${pick(RO.win)}</div><br>
+        <div class="row"><button class="btn solid" id="mj-again">Play again</button></div>`),350);
+      setTimeout(()=>{ const b=$("#mj-again"); if(b) b.onclick=()=>{closeModal(); maybeInterstitial(newGame);}; },360);
+      return;
+    }
+    if(!availablePairs().length){
+      $("#mj-say").textContent="Soft-locked! Rerolling the board for you…";
+      setTimeout(reshuffle,900);
+    } else if(moves%6===0){ $("#mj-say").textContent=pick(["Combo! Okay, you're cracked.","Clean.","Clip that.","Speedrun energy. Suspicious."]); }
+  }
+  function reshuffle(){
+    const rem=tiles.filter(t=>!t.gone), counts={};
+    rem.forEach(t=>counts[t.kind]=(counts[t.kind]||0)+1);
+    const pairs=[]; Object.entries(counts).forEach(([k,n])=>{ for(let i=0;i<n/2;i++) pairs.push(k); });
+    let m=deal(rem,pairs);
+    if(!m){
+      // No fully solvable arrangement left (tiles stacked on each other): at least set up one match
+      const set=presentSet(), free=shuffle(rem.filter(t=>freeIn(t,set)));
+      if(free.length<2){ $("#mj-say").textContent="Oh no, this one's tangled. Try Undo or a new game?"; return; }
+      const kinds=[]; pairs.forEach(k=>kinds.push(k,k));
+      const k0=kinds.splice(kinds.indexOf(pairs[0]),2)[0];
+      shuffle(kinds); m=new Map();
+      rem.forEach(t=>{ m.set(K(t.l,t.c,t.r), (t===free[0]||t===free[1])?k0:kinds.pop()); });
+      $("#mj-say").textContent="I shuffled, but it's getting tangled. Undo might help!";
+    }
+    rem.forEach(t=>t.kind=m.get(K(t.l,t.c,t.r)));
+    sel=null; render(); toast("Shuffled!");
+  }
+  function hint(){
+    const go=()=>{ hints++; const p=availablePairs()[0]; render();
+      if(!p){ reshuffle(); return; }
+      p.forEach(t=>{ const el=document.querySelector(`.tile[data-id="${t.id}"]`); if(el) el.classList.add("hint"); });
+      $("#mj-say").textContent="Psst. Those two. I can see the render seams.";
+    };
+    if(hints<ADS.freeHintsPerGame) go(); else showRewardedAd(go);
+  }
+  function undo(){ const p=hist.pop(); if(!p) return; p.forEach(i=>tiles[i].gone=false); moves++; sel=null; render(); }
+  function init(){
+    $("#mj-new").onclick=newGame; $("#mj-hint").onclick=hint; $("#mj-shuffle").onclick=reshuffle; $("#mj-undo").onclick=undo;
+    addEventListener("resize",()=>{ if(tiles.length) render(); });
+    newGame();
+  }
+  return {init,render};
+})();
+
+/* ============================================================
+   RO WORD
+   ============================================================ */
+const WORD = (()=>{
+  const VALID=new Set(); for(let i=0;i<RO_VALID.length;i+=5) VALID.add(RO_VALID.slice(i,i+5));
+  const EPOCH=Date.UTC(2026,0,1);
+  const dayNum=()=>{ const d=new Date(); return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)+1; };
+  let mode="daily", answer="", guesses=[], cur="", over=false, revealed=new Set();
+  const ROWS=["qwertyuiop","asdfghjkl","↵zxcvbnm⌫"];
+
+  function score(g,a){
+    const res=Array(5).fill("a"), rem={};
+    for(let i=0;i<5;i++){ if(g[i]===a[i]) res[i]="c"; else rem[a[i]]=(rem[a[i]]||0)+1; }
+    for(let i=0;i<5;i++){ if(res[i]!=="c" && rem[g[i]]){ res[i]="p"; rem[g[i]]--; } }
+    return res;
+  }
+  function start(m){
+    mode=m; over=false; cur=""; revealed=new Set();
+    $("#w-daily").classList.toggle("on",m==="daily"); $("#w-prac").classList.toggle("on",m==="practice");
+    if(m==="daily"){
+      const n=dayNum(); $("#w-num").textContent=n;
+      answer=RO_ANSWERS[(n-1)%RO_ANSWERS.length];
+      const saved=store.get("word",{});
+      guesses=(saved.day===n && saved.guesses)||[];
+      over=guesses.includes(answer)||guesses.length>=6;
+      $("#w-say").textContent=over?"Daily cleared! Practice mode is open for grinding.":"Six lives to guess my word. Mint = right spot, gold = wrong spot. Go.";
+    } else {
+      answer=RO_ANSWERS[rnd(RO_ANSWERS.length)]; guesses=[];
+      $("#w-say").textContent="Practice mode: infinite continues.";
+    }
+    render(true);
+  }
+  function save(){
+    if(mode!=="daily") return;
+    const s=store.get("word",{}); s.day=dayNum(); s.guesses=guesses; store.set("word",s);
+  }
+  function render(anim){
+    const g=$("#w-grid"); g.innerHTML="";
+    for(let r=0;r<6;r++){
+      const row=document.createElement("div"); row.className="wrow";
+      const word=r<guesses.length?guesses[r]:(r===guesses.length?cur:"");
+      const sc=r<guesses.length?score(guesses[r],answer):null;
+      for(let c=0;c<5;c++){
+        const t=document.createElement("div");
+        t.className="wt"+(word[c]?" filled":"")+(sc?" "+sc[c]:"");
+        if(sc) t.style.animationDelay=(anim===r?c*0.12:0)+"s";
+        let ch=word[c]||"";
+        if(!ch && r===guesses.length && revealed.size){ for(const i of revealed) if(i===c){ ch=""; t.style.borderColor="var(--sage)"; t.innerHTML=`<span style="opacity:.35">${answer[i]}</span>`; } }
+        if(ch) t.textContent=ch;
+        row.appendChild(t);
+      }
+      g.appendChild(row);
+    }
+    // keyboard
+    const st={}; guesses.forEach(w=>score(w,answer).forEach((s,i)=>{ const k=w[i], p=st[k]; if(s==="c"||(s==="p"&&p!=="c")||(!p)) st[k]=s; }));
+    const kb=$("#w-kb"); kb.innerHTML="";
+    ROWS.forEach(r=>{ const row=document.createElement("div"); row.className="kr";
+      [...r].forEach(k=>{ const b=document.createElement("button"); b.className="key"+(k==="↵"||k==="⌫"?" wide":"")+(st[k]?" "+st[k]:"");
+        b.textContent=k==="↵"?"enter":k; b.onclick=()=>key(k==="↵"?"Enter":k==="⌫"?"Backspace":k); row.appendChild(b); });
+      kb.appendChild(row); });
+  }
+  function shakeRow(){ const r=$("#w-grid").children[guesses.length]; if(r){ r.classList.remove("shake"); void r.offsetWidth; r.classList.add("shake"); } }
+  function key(k){
+    if(over || location.hash!=="#word" || $("#modal").classList.contains("on")) return;
+    if(k==="Enter"){
+      if(cur.length<5){ toast("Five letters, please!"); shakeRow(); return; }
+      if(!VALID.has(cur)){ toast("Not in my word list, try again!"); shakeRow(); return; }
+      guesses.push(cur); cur=""; revealed=new Set(); save(); render(guesses.length-1);
+      const last=guesses[guesses.length-1];
+      if(last===answer){ over=true; setTimeout(()=>finish(true),800); }
+      else if(guesses.length>=6){ over=true; setTimeout(()=>finish(false),800); }
+      return;
+    }
+    if(k==="Backspace"){ cur=cur.slice(0,-1); render(); return; }
+    if(/^[a-z]$/i.test(k) && cur.length<5){ cur+=k.toLowerCase(); render(); }
+  }
+  function finish(won){
+    if(mode==="daily"){
+      const s=store.get("word",{}); const n=dayNum();
+      if(s.lastDone!==n){ s.played=(s.played||0)+1; if(won){ addXP(40+(6-guesses.length)*15); s.wins=(s.wins||0)+1; s.streak=(s.lastWin===n-1?(s.streak||0):0)+1; s.lastWin=n; } else s.streak=0; s.lastDone=n; store.set("word",s); renderHome(); }
+    }
+    const grid=guesses.map(g=>score(g,answer).map(x=>x==="c"?"🟩":x==="p"?"🟨":"⬜").join("")).join("\n");
+    const share=`Pru Word ${mode==="daily"?"#"+dayNum():"(practice)"} ${won?guesses.length:"X"}/6\n${grid}`;
+    const s=store.get("word",{});
+    modal(`<svg style="width:64px;height:64px"><use href="#ro-mark"/></svg>
+      <h3>${won?"VICTORY!":"GAME OVER"}</h3>
+      <p>The word was <b style="text-transform:uppercase;letter-spacing:2px;color:var(--auburn)">${answer}</b>${mode==="daily"?`<br>Streak: <b>${s.streak||0}</b> · Wins: <b>${s.wins||0}</b>/${s.played||0}`:""}</p>
+      <div class="bigsig">${won?pick(RO.win):"Continue? Tomorrow's word is already loaded. I believe in you."}</div><br>
+      <div class="row"><button class="btn" id="w-share">Copy result</button><button class="btn solid" id="w-more">Practice round</button></div>`);
+    $("#w-share").onclick=async()=>{ try{ await navigator.clipboard.writeText(share); toast("Copied! Go flex in the group chat."); }catch(e){ toast("Couldn't copy here, sorry!"); } };
+    $("#w-more").onclick=()=>{ closeModal(); maybeInterstitial(()=>start("practice")); };
+  }
+  function hint(){
+    if(over) return;
+    const known=new Set(); guesses.forEach(g=>score(g,answer).forEach((s,i)=>{ if(s==="c") known.add(i); }));
+    const opts=[0,1,2,3,4].filter(i=>!known.has(i)&&!revealed.has(i));
+    if(!opts.length){ toast("You've found every spot already!"); return; }
+    showRewardedAd(()=>{ const i=opts[rnd(opts.length)]; revealed.add(i); render(); toast(`Letter ${i+1} is "${answer[i].toUpperCase()}"`); });
+  }
+  function init(){
+    $("#w-daily").onclick=()=>start("daily"); $("#w-prac").onclick=()=>start("practice"); $("#w-hint").onclick=hint;
+    addEventListener("keydown",e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(location.hash==="#word"){ if(e.key==="Enter"||e.key==="Backspace"||/^[a-z]$/i.test(e.key)){ e.preventDefault(); key(e.key);} } });
+    start("daily");
+  }
+  return {init};
+})();
+
+/* ============================================================
+   RO SUDOKU
+   ============================================================ */
+const SU = (()=>{
+  const CLUES={gentle:40,steady:32,tricky:26};
+  let sol=[], puz=[], board=[], notes=[], given=[], sel=-1, notesOn=false, hist=[], mistakes=0, hints=0, elapsed=0, timer=null, done=false;
+  const row=i=>Math.floor(i/9), col=i=>i%9, box=i=>Math.floor(row(i)/3)*3+Math.floor(col(i)/3);
+  const peers=i=>{ const p=[]; for(let j=0;j<81;j++) if(j!==i&&(row(j)===row(i)||col(j)===col(i)||box(j)===box(i))) p.push(j); return p; };
+  const PEERS=Array.from({length:81},(_,i)=>peers(i));
+  const ok=(g,i,v)=>PEERS[i].every(j=>g[j]!==v);
+
+  function fill(g){
+    const i=g.indexOf(0); if(i<0) return true;
+    for(const v of shuffle([1,2,3,4,5,6,7,8,9])){ if(ok(g,i,v)){ g[i]=v; if(fill(g)) return true; g[i]=0; } }
+    return false;
+  }
+  function count(g,limit){
+    // MRV backtracking solution counter
+    let best=-1, bestOpts=null;
+    for(let i=0;i<81;i++){ if(g[i]) continue; const o=[]; for(let v=1;v<=9;v++) if(ok(g,i,v)) o.push(v);
+      if(!o.length) return 0; if(!bestOpts||o.length<bestOpts.length){ best=i; bestOpts=o; if(o.length===1) break; } }
+    if(best<0) return 1;
+    let n=0; for(const v of bestOpts){ g[best]=v; n+=count(g,limit-n); if(n>=limit){ g[best]=0; return n; } } g[best]=0; return n;
+  }
+  function generate(diff){
+    sol=Array(81).fill(0); fill(sol);
+    puz=sol.slice(); let clues=81; const target=CLUES[diff];
+    for(const i of shuffle([...Array(81).keys()])){
+      if(clues<=target) break;
+      const v=puz[i]; puz[i]=0;
+      if(count(puz.slice(),2)!==1) puz[i]=v; else clues--;
+    }
+  }
+  function newGame(){
+    const diff=$("#s-diff").value; generate(diff);
+    board=puz.slice(); given=puz.map(v=>v>0); notes=Array.from({length:81},()=>new Set());
+    sel=-1; hist=[]; mistakes=0; hints=0; elapsed=0; done=false;
+    clearInterval(timer); timer=setInterval(()=>{ if(!done && location.hash==="#sudoku"){ elapsed++; $("#s-time").textContent=fmt(elapsed);} },1000);
+    $("#s-time").textContent="0:00";
+    $("#s-say").textContent={gentle:"Casual mode. Snacks and vibes.",steady:"Ranked. Every row, column and box gets 1 through 9.",tricky:"Boss fight! I'll be on comms if you need me."}[diff];
+    render();
+  }
+  function render(){
+    const g=$("#s-grid"); g.innerHTML="";
+    const sv=sel>=0?board[sel]:0;
+    for(let i=0;i<81;i++){
+      const c=document.createElement("div"); let cls="sc";
+      if(col(i)===2||col(i)===5) cls+=" br"; if(row(i)===2||row(i)===5) cls+=" bb";
+      if(given[i]) cls+=" given"; else if(board[i]) cls+=" user";
+      if(board[i] && !given[i] && board[i]!==sol[i]) cls+=" err";
+      if(sel>=0){ if(i===sel) cls+=" sel"; else if(sv && board[i]===sv) cls+=" same"; else if(PEERS[sel].includes(i)) cls+=" peer"; }
+      c.className=cls;
+      if(board[i]) c.textContent=board[i];
+      else if(notes[i].size){ c.innerHTML=`<div class="notes">${[1,2,3,4,5,6,7,8,9].map(n=>`<i>${notes[i].has(n)?n:""}</i>`).join("")}</div>`; }
+      c.onclick=()=>{ sel=i; render(); };
+      g.appendChild(c);
+    }
+    const pad=$("#s-pad"); pad.innerHTML="";
+    for(let n=1;n<=9;n++){ const b=document.createElement("button"); b.textContent=n;
+      if(board.filter((v,i)=>v===n&&v===sol[i]).length===9) b.className="done";
+      b.onclick=()=>input(n); pad.appendChild(b); }
+    $("#s-mist").textContent=mistakes+(mistakes===1?" mistake":" mistakes");
+    const free=Math.max(0,ADS.freeHintsPerGame-hints);
+    $("#s-hc").innerHTML=free?`(${free})`:`<span class="ad">AD</span>`;
+    $("#s-notes").textContent="✎ Notes: "+(notesOn?"on":"off"); $("#s-notes").classList.toggle("on",notesOn);
+    $("#s-undo").disabled=!hist.length;
+  }
+  function snapshot(){ hist.push({board:board.slice(),notes:notes.map(s=>new Set(s))}); if(hist.length>200) hist.shift(); }
+  function input(n){
+    if(done||sel<0||given[sel]) return;
+    snapshot();
+    if(notesOn){ board[sel]=0; notes[sel].has(n)?notes[sel].delete(n):notes[sel].add(n); render(); return; }
+    if(board[sel]===n){ board[sel]=0; render(); return; }
+    board[sel]=n; notes[sel].clear();
+    if(n!==sol[sel]){ mistakes++; $("#s-say").textContent=pick(RO.oops.slice(1)); }
+    else PEERS[sel].forEach(j=>notes[j].delete(n));
+    render(); check();
+  }
+  function erase(){ if(done||sel<0||given[sel]) return; snapshot(); board[sel]=0; notes[sel].clear(); render(); }
+  function undo(){ const h=hist.pop(); if(!h) return; board=h.board; notes=h.notes; render(); }
+  function hint(){
+    if(done) return;
+    const go=()=>{
+      hints++;
+      let i=(sel>=0 && board[sel]!==sol[sel])?sel:-1;
+      if(i<0){ const empties=[...Array(81).keys()].filter(j=>board[j]!==sol[j]); if(!empties.length) return; i=empties[rnd(empties.length)]; }
+      snapshot(); board[i]=sol[i]; notes[i].clear(); PEERS[i].forEach(j=>notes[j].delete(sol[i])); sel=i;
+      $("#s-say").textContent="Wallhack activated. That one's a "+sol[i]+".";
+      render(); check();
+    };
+    if(hints<ADS.freeHintsPerGame) go(); else showRewardedAd(go);
+  }
+  function check(){
+    if(board.every((v,i)=>v===sol[i])){
+      done=true; bump("su",{gentle:60,steady:100,tricky:160}[$("#s-diff").value]);
+      setTimeout(()=>{ modal(`<svg style="width:72px;height:72px"><use href="#ro-mark"/></svg><h3>BOSS DEFEATED!</h3>
+        <p>${$("#s-diff").selectedOptions[0].text} puzzle in ${fmt(elapsed)} with ${mistakes} ${mistakes===1?"mistake":"mistakes"}.</p>
+        <div class="bigsig">${pick(RO.win)}</div><br><div class="row"><button class="btn solid" id="s-again">Next puzzle</button></div>`);
+        $("#s-again").onclick=()=>{ closeModal(); maybeInterstitial(newGame); }; },300);
+    }
+  }
+  function init(){
+    $("#s-new").onclick=newGame; $("#s-diff").onchange=newGame; $("#s-erase").onclick=erase; $("#s-undo").onclick=undo; $("#s-hint").onclick=hint;
+    $("#s-notes").onclick=()=>{ notesOn=!notesOn; render(); };
+    addEventListener("keydown",e=>{
+      if(location.hash!=="#sudoku"||$("#modal").classList.contains("on")) return;
+      if(/^[1-9]$/.test(e.key)) input(+e.key);
+      else if(e.key==="Backspace"||e.key==="Delete"||e.key==="0") erase();
+      else if(e.key==="n"){ notesOn=!notesOn; render(); }
+      else if(e.key.startsWith("Arrow")){ e.preventDefault(); if(sel<0) sel=0; else { const r=row(sel),c=col(sel);
+        sel={ArrowUp:((r+8)%9)*9+c,ArrowDown:((r+1)%9)*9+c,ArrowLeft:r*9+(c+8)%9,ArrowRight:r*9+(c+1)%9}[e.key]; } render(); }
+    });
+    newGame();
+  }
+  return {init};
+})();
+
+
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+/* ============================================================
+   RO SOLITAIRE — Klondike, draw 1, tap-to-move
+   ============================================================ */
+const SOL = (()=>{
+  const SUITS=["♠","♥","♦","♣"], RANKS=["","A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  const red=s=>s===1||s===2;
+  let st, hist=[], moves=0, elapsed=0, timer=null, hints=0, done=false, autoRunning=false;
+  const top=a=>a[a.length-1];
+
+  function newGame(){
+    const deck=[]; for(let s=0;s<4;s++) for(let r=1;r<=13;r++) deck.push({s,r,up:false});
+    shuffle(deck);
+    st={stock:[],waste:[],found:[[],[],[],[]],tab:[[],[],[],[],[],[],[]]};
+    for(let i=0;i<7;i++) for(let j=i;j<7;j++){ const c=deck.pop(); c.up=(j===i); st.tab[j].push(c); }
+    st.stock=deck;
+    hist=[]; moves=0; elapsed=0; hints=0; done=false; autoRunning=false;
+    clearInterval(timer); timer=setInterval(()=>{ if(!done && location.hash==="#solitaire"){ elapsed++; $("#sol-time").textContent=fmt(elapsed);} },1000);
+    $("#sol-time").textContent="0:00";
+    $("#sol-say").textContent="Tap a card to auto-move it. Tap the deck to draw.";
+    render();
+  }
+  const snap=()=>{ hist.push(JSON.stringify(st)); if(hist.length>300) hist.shift(); };
+  const canFound=c=>st.found[c.s].length===c.r-1;
+  const canTab=(c,col)=>{ const t=top(col); if(!t) return c.r===13; return t.up && red(t.s)!==red(c.s) && t.r===c.r+1; };
+  function flipTops(){ st.tab.forEach(col=>{ const t=top(col); if(t && !t.up){ t.up=true; } }); }
+
+  function cardHTML(c){
+    if(!c.up) return `<div class="card back"></div>`;
+    return `<div class="card ${red(c.s)?"red":""}"><span class="cr">${RANKS[c.r]}<br>${SUITS[c.s]}</span><span class="cs">${SUITS[c.s]}</span></div>`;
+  }
+  function render(){
+    const felt=$("#sol-felt"); const gap=felt.clientWidth<500?5:8; felt.style.setProperty("--gap",gap+"px");
+    const cw=(felt.clientWidth-28-gap*6)/7, ch=cw*1.4;
+    felt.style.setProperty("--fs",Math.max(10,Math.min(17,cw*0.22))+"px");
+    // top row
+    const T=$("#sol-top"); T.innerHTML="";
+    const stock=document.createElement("div"); stock.className="slot stock";
+    stock.innerHTML=st.stock.length?cardHTML({up:false}):"↻"; stock.onclick=draw; T.appendChild(stock);
+    const waste=document.createElement("div"); waste.className="slot"; waste.style.borderStyle=st.waste.length?"none":"dashed";
+    if(st.waste.length){ waste.innerHTML=cardHTML(top(st.waste)); waste.firstChild.onclick=e=>tap({t:"waste"},e.currentTarget); waste.firstChild.dataset.k="waste"; }
+    T.appendChild(waste);
+    T.appendChild(document.createElement("div"));
+    for(let s=0;s<4;s++){
+      const f=document.createElement("div"); f.className="slot";
+      if(st.found[s].length){ f.innerHTML=cardHTML(top(st.found[s])); f.firstChild.onclick=e=>tap({t:"found",s},e.currentTarget); f.firstChild.dataset.k="f"+s; }
+      else f.innerHTML=`<span class="fs" style="color:${red(s)?"#E8358A":"#9A8CCB"}">${SUITS[s]}</span>`;
+      T.appendChild(f);
+    }
+    // tableau
+    const B=$("#sol-tab"); B.innerHTML=""; let maxH=ch;
+    st.tab.forEach((col,ci)=>{
+      const d=document.createElement("div"); d.className="col";
+      let y=0;
+      if(!col.length){ const e=document.createElement("div"); e.className="slot"; e.innerHTML="K"; e.style.fontSize="12px"; d.appendChild(e); }
+      col.forEach((c,i)=>{
+        const w=document.createElement("div"); w.innerHTML=cardHTML(c); const el=w.firstChild;
+        el.style.top=y+"px"; el.dataset.k=`t${ci}-${i}`;
+        if(c.up) el.onclick=e=>tap({t:"tab",col:ci,i},e.currentTarget);
+        d.appendChild(el);
+        y+= c.up? ch*0.28 : ch*0.14;
+      });
+      const h=col.length? (y - (top(col).up?ch*0.28:ch*0.14) + ch) : ch;
+      maxH=Math.max(maxH,h);
+      B.appendChild(d);
+    });
+    [...B.children].forEach(d=>d.style.height=maxH+"px");
+    $("#sol-moves").textContent=moves+" moves";
+    $("#sol-undo").disabled=!hist.length;
+    const free=Math.max(0,ADS.freeHintsPerGame-hints);
+    $("#sol-hc").innerHTML=free?`(${free})`:`<span class="ad">AD</span>`;
+    const canAuto=!done && !st.stock.length && !st.waste.length && st.tab.every(c=>c.every(x=>x.up));
+    $("#sol-auto").style.display=canAuto?"":"none";
+  }
+  function shakeEl(el){ if(!el) return; el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+  function draw(){
+    if(done||autoRunning) return;
+    snap();
+    if(st.stock.length){ const c=st.stock.pop(); c.up=true; st.waste.push(c); }
+    else if(st.waste.length){ st.stock=st.waste.reverse().map(c=>(c.up=false,c)); st.waste=[]; }
+    else { hist.pop(); return; }
+    moves++; render();
+  }
+  // returns a target for moving cards from src, or null
+  function findTarget(src){
+    let cards;
+    if(src.t==="waste") cards=[top(st.waste)];
+    else if(src.t==="found") cards=[top(st.found[src.s])];
+    else cards=st.tab[src.col].slice(src.i);
+    const c=cards[0];
+    if(cards.length===1 && src.t!=="found" && canFound(c)) return {t:"found"};
+    // prefer non-empty columns, then empty (kings)
+    const order=[...Array(7).keys()].filter(k=>!(src.t==="tab"&&k===src.col)).sort((a,b)=>(st.tab[a].length?0:1)-(st.tab[b].length?0:1));
+    for(const k of order){
+      if(!canTab(c,st.tab[k])) continue;
+      // don't shuffle a king from one empty-bottomed column to another empty column
+      if(!st.tab[k].length && src.t==="tab" && src.i===0) continue;
+      return {t:"tab",col:k};
+    }
+    return null;
+  }
+  function doMove(src,dst){
+    snap();
+    let cards;
+    if(src.t==="waste") cards=[st.waste.pop()];
+    else if(src.t==="found") cards=[st.found[src.s].pop()];
+    else cards=st.tab[src.col].splice(src.i);
+    if(dst.t==="found") st.found[cards[0].s].push(cards[0]); else st.tab[dst.col].push(...cards);
+    flipTops(); moves++; render(); checkWin();
+  }
+  function tap(src,el){
+    if(done||autoRunning) return;
+    const dst=findTarget(src);
+    if(!dst){ shakeEl(el); $("#sol-say").textContent=pick(RO.oops.slice(1)); return; }
+    doMove(src,dst);
+  }
+  function allMoves(){
+    const out=[];
+    // to foundation
+    if(st.waste.length && canFound(top(st.waste))) out.push({src:{t:"waste"},score:5});
+    st.tab.forEach((col,ci)=>{ if(col.length && canFound(top(col))) out.push({src:{t:"tab",col:ci,i:col.length-1},score:5}); });
+    // tableau moves that reveal a card or move from waste
+    st.tab.forEach((col,ci)=>{ const i=col.findIndex(c=>c.up); if(i<0) return;
+      const d=findTarget({t:"tab",col:ci,i}); if(d&&d.t==="tab"&&i>0) out.push({src:{t:"tab",col:ci,i},score:4}); });
+    if(st.waste.length){ const d=findTarget({t:"waste"}); if(d) out.push({src:{t:"waste"},score:3}); }
+    return out.sort((a,b)=>b.score-a.score);
+  }
+  function hint(){
+    if(done) return;
+    const go=()=>{ hints++; render();
+      const m=allMoves()[0];
+      let el=null;
+      if(!m){ el=$("#sol-top .slot.stock"); $("#sol-say").textContent=st.stock.length||st.waste.length?"Nothing on the board. Draw from the deck!":"Hmm, I think we're stuck. New deal?"; }
+      else { const k=m.src.t==="waste"?"waste":`t${m.src.col}-${m.src.i}`; el=document.querySelector(`#sol-felt [data-k="${k}"]`); $("#sol-say").textContent="Psst… that one has a move."; }
+      if(el) el.classList.add("hint");
+    };
+    if(hints<ADS.freeHintsPerGame) go(); else showRewardedAd(go);
+  }
+  function undo(){ if(autoRunning) return; const h=hist.pop(); if(!h) return; st=JSON.parse(h); moves++; render(); }
+  async function autoFinish(){
+    if(autoRunning) return; autoRunning=true; snap();
+    while(st.found.some(f=>f.length<13)){
+      let moved=false;
+      for(let ci=0;ci<7 && !moved;ci++){ const c=top(st.tab[ci]); if(c && canFound(c)){ st.found[c.s].push(st.tab[ci].pop()); moved=true; } }
+      if(!moved) break;
+      moves++; render(); await sleep(55);
+    }
+    autoRunning=false; checkWin();
+  }
+  function checkWin(){
+    if(done || st.found.some(f=>f.length<13)) return;
+    done=true; bump("sol",120);
+    setTimeout(()=>{ modal(`<svg style="width:72px;height:72px"><use href="#ro-mark"/></svg><h3>FLAWLESS DEAL!</h3>
+      <p>${moves} moves in ${fmt(elapsed)}.</p><div class="bigsig">${pick(RO.win)}</div><br>
+      <div class="row"><button class="btn solid" id="sol-again">Deal again</button></div>`);
+      $("#sol-again").onclick=()=>{ closeModal(); maybeInterstitial(newGame); }; },400);
+  }
+  function init(){
+    $("#sol-new").onclick=newGame; $("#sol-undo").onclick=undo; $("#sol-hint").onclick=hint; $("#sol-auto").onclick=autoFinish;
+    addEventListener("resize",()=>{ if(st && location.hash==="#solitaire") render(); });
+    newGame();
+  }
+  return {init,render,_state:()=>st};
+})();
+
+/* ============================================================
+   RO MATCH — match-3 with levels
+   ============================================================ */
+const MATCH = (()=>{
+  const GEMS=["💖","💎","⭐","🍓","🧋","🎮"], N=8;
+  let g=[], level=1, score=0, target=0, movesLeft=0, busy=false, sel=-1, hints=0, over=false;
+  let popSet=new Set(), dropSet=new Set();
+  const R=i=>Math.floor(i/N), C=i=>i%N;
+  const lvTarget=l=>500+(l-1)*250, lvMoves=l=>Math.max(14,20-Math.floor((l-1)/3));
+
+  function makes(i,v){ const r=R(i),c=C(i);
+    if(c>=2 && g[i-1]===v && g[i-2]===v) return true;
+    if(r>=2 && g[i-N]===v && g[i-2*N]===v) return true; return false; }
+  function fill(){ do{ g=[]; for(let i=0;i<N*N;i++){ let v; do{ v=rnd(GEMS.length); }while(makes(i,v)); g.push(v);} }while(!findMove()); }
+  function matches(){
+    const set=new Set(); let line=false, bomb=false;
+    const run=(idx)=>{ // idx: array of indices along a line
+      let s=0;
+      for(let k=1;k<=idx.length;k++){
+        if(k<idx.length && g[idx[k]]!==null && g[idx[k]]===g[idx[s]]) continue;
+        const len=k-s;
+        if(len>=3 && g[idx[s]]!==null){
+          for(let m=s;m<k;m++) set.add(idx[m]);
+          if(len>=5){ const t=g[idx[s]]; g.forEach((v,j)=>{ if(v===t) set.add(j); }); bomb=true; }
+          else if(len===4){ idx.forEach(j=>set.add(j)); line=true; }
+        }
+        s=k;
+      }
+    };
+    for(let r=0;r<N;r++) run([...Array(N)].map((_,c)=>r*N+c));
+    for(let c=0;c<N;c++) run([...Array(N)].map((_,r)=>r*N+c));
+    return {set,line,bomb};
+  }
+  function swapIdx(a,b){ [g[a],g[b]]=[g[b],g[a]]; }
+  function findMove(){
+    for(let i=0;i<N*N;i++){ for(const j of [C(i)<N-1?i+1:-1, R(i)<N-1?i+N:-1]){ if(j<0) continue;
+      swapIdx(i,j); const m=matches().set.size; swapIdx(i,j); if(m) return [i,j]; } }
+    return null;
+  }
+  const adj=(a,b)=>(R(a)===R(b)&&Math.abs(C(a)-C(b))===1)||(C(a)===C(b)&&Math.abs(R(a)-R(b))===1);
+
+  function startLevel(l){
+    level=l; store.set("matchLevel",level); score=0; target=lvTarget(l); movesLeft=lvMoves(l); hints=0; over=false; sel=-1; busy=false;
+    fill(); popSet.clear(); dropSet=new Set([...Array(N*N).keys()]);
+    $("#m-say").textContent=l===1?"Swipe or tap two neighbors to swap. Match 3+ to score.":`Level ${l}! Hit ${target} points in ${movesLeft} moves.`;
+    render(); renderHome();
+  }
+  function render(){
+    const G=$("#m-grid"); G.innerHTML="";
+    g.forEach((v,i)=>{ const d=document.createElement("div");
+      d.className="gem"+(i===sel?" sel":"")+(popSet.has(i)?" pop":"")+(dropSet.has(i)?" drop":"");
+      d.dataset.i=i; d.textContent=v===null?"":GEMS[v]; G.appendChild(d); });
+    dropSet.clear();
+    $("#m-lv").textContent=level; $("#m-score").textContent=score; $("#m-target").textContent=target; $("#m-moves").textContent=movesLeft;
+    $("#m-prog i").style.width=Math.min(100,score/target*100)+"%";
+    const free=Math.max(0,ADS.freeHintsPerGame-hints);
+    $("#m-hc").innerHTML=free?`(${free})`:`<span class="ad">AD</span>`;
+  }
+  function gemEl(i){ return document.querySelector(`#m-grid .gem[data-i="${i}"]`); }
+  async function trySwap(a,b){
+    if(busy||over||!adj(a,b)) return;
+    busy=true; sel=-1;
+    swapIdx(a,b); render();
+    await sleep(120);
+    let m=matches();
+    if(!m.set.size){ swapIdx(a,b); render(); [a,b].forEach(i=>{ const e=gemEl(i); if(e){ e.classList.add("shake"); } }); busy=false; return; }
+    movesLeft--;
+    let combo=0;
+    while(m.set.size){
+      combo++;
+      score+=m.set.size*10*combo;
+      $("#m-combo").textContent= m.bomb?"✦ GEM BOMB! ✦": m.line?"LINE CLEAR!": combo>1?`COMBO x${combo}!`:"";
+      popSet=m.set; render(); popSet=new Set();
+      await sleep(230);
+      m.set.forEach(i=>g[i]=null);
+      // gravity
+      for(let c=0;c<N;c++){
+        const colVals=[]; for(let r=N-1;r>=0;r--){ const v=g[r*N+c]; if(v!==null) colVals.push(v); }
+        for(let r=N-1,k=0;r>=0;r--,k++){
+          const i=r*N+c;
+          if(k<colVals.length){ if(g[i]!==colVals[k]) dropSet.add(i); g[i]=colVals[k]; }
+          else { g[i]=rnd(GEMS.length); dropSet.add(i); }
+        }
+      }
+      render(); await sleep(260);
+      m=matches();
+    }
+    if(combo>2) $("#m-say").textContent=pick(["Chain reaction! Clip it!","That cascade was so clean.","Okay you're actually cracked."]);
+    setTimeout(()=>{ $("#m-combo").textContent=""; },700);
+    if(!findMove()){ $("#m-say").textContent="No moves left, rerolling the board!"; await sleep(500); fill(); dropSet=new Set([...Array(N*N).keys()]); render(); }
+    busy=false; checkEnd();
+  }
+  function checkEnd(){
+    if(score>=target){
+      over=true; const stars=movesLeft>=5?3:movesLeft>=2?2:1;
+      bump("match",60+level*20);
+      setTimeout(()=>{ modal(`<svg style="width:64px;height:64px"><use href="#ro-mark"/></svg><h3>LEVEL ${level} CLEAR!</h3>
+        <div style="font-size:30px;letter-spacing:6px">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
+        <p>${score} points with ${movesLeft} moves to spare.</p><div class="bigsig">${pick(RO.win)}</div><br>
+        <div class="row"><button class="btn solid" id="m-next">Level ${level+1} ▶</button></div>`);
+        $("#m-next").onclick=()=>{ closeModal(); maybeInterstitial(()=>startLevel(level+1)); }; },350);
+    } else if(movesLeft<=0){
+      over=true;
+      setTimeout(()=>{ modal(`<h3>OUT OF MOVES</h3><p>${score} / ${target} points. Sooo close.</p>
+        <div class="bigsig">Want a continue? Five moves for one ad. Fair trade.</div><br>
+        <div class="row"><button class="btn" id="m-retry">Retry level</button><button class="btn auburn" id="m-plus">+5 moves <span class="ad">AD</span></button></div>`);
+        $("#m-retry").onclick=()=>{ closeModal(); startLevel(level); };
+        $("#m-plus").onclick=()=>{ closeModal(); showRewardedAd(()=>{ movesLeft+=5; over=false; render(); toast("+5 moves! Let's gooo"); }); }; },350);
+    }
+  }
+  function hint(){
+    if(busy||over) return;
+    const go=()=>{ hints++; render(); const mv=findMove(); if(mv) mv.forEach(i=>{ const e=gemEl(i); if(e) e.classList.add("hint"); }); };
+    if(hints<ADS.freeHintsPerGame) go(); else showRewardedAd(go);
+  }
+  function init(){
+    const G=$("#m-grid"); let start=null;
+    G.addEventListener("pointerdown",e=>{ const el=e.target.closest(".gem"); if(!el) return; start={i:+el.dataset.i,x:e.clientX,y:e.clientY,moved:false}; });
+    G.addEventListener("pointermove",e=>{ if(!start||start.moved) return; const dx=e.clientX-start.x, dy=e.clientY-start.y;
+      if(Math.max(Math.abs(dx),Math.abs(dy))<18) return;
+      start.moved=true; const i=start.i; let j;
+      if(Math.abs(dx)>Math.abs(dy)) j= dx>0 ? (C(i)<N-1?i+1:-1) : (C(i)>0?i-1:-1);
+      else j= dy>0 ? (R(i)<N-1?i+N:-1) : (R(i)>0?i-N:-1);
+      if(j>=0) trySwap(i,j); });
+    const end=()=>{ if(start && !start.moved){ const i=start.i;
+        if(sel<0) { sel=i; render(); }
+        else if(sel===i){ sel=-1; render(); }
+        else if(adj(sel,i)) trySwap(sel,i);
+        else { sel=i; render(); } }
+      start=null; };
+    G.addEventListener("pointerup",end); G.addEventListener("pointercancel",()=>start=null);
+    $("#m-hint").onclick=hint; $("#m-restart").onclick=()=>startLevel(level);
+    startLevel(store.get("matchLevel",1));
+  }
+  return {init};
+})();
+
+/* ============================================================
+   HOUSE TRIVIA — UNREAL Season 1 (DRAFT content, internal preview)
+   ============================================================ */
+const TRIVIA = (()=>{
+  // Set latestEpisode to the most recent aired episode so trivia never spoils.
+  const CFG={latestEpisode:0, perRound:10, seconds:15};
+  // a[0] is the correct answer; options are shuffled on screen. e = episode it unlocks after.
+  const Q=[]; // question bank added after founder approval, unlocked per aired episode
+  let round=[], idx=0, pts=0, correct=0, streak=0, tLeft=0, tick=null, fifty=1, locked=false;
+  const box=()=>$("#t-box");
+
+  function intro(){
+    clearInterval(tick);
+    const best=store.get("triviaBest",0);
+    const pool=Q.filter(x=>x.e<=CFG.latestEpisode).length;
+    if(!pool){ box().innerHTML=`<div class="tcard tintro"><svg style="width:84px;height:84px"><use href="#ro-mark"/></svg>
+      <h3>LOCKED UNTIL PREMIERE</h3><p>House Trivia unlocks when UNREAL Season 1 starts airing, with new questions after every episode. No spoilers, I promise.</p>
+      <br><a class="btn solid" style="text-decoration:none" href="https://www.unreal.show" target="_blank" rel="noopener">unreal.show ↗</a></div>`; return; }
+    box().innerHTML=`<div class="tcard tintro"><svg style="width:84px;height:84px"><use href="#ro-mark"/></svg>
+      <h3>How well do you know the house?</h3>
+      <p>${CFG.perRound} questions · ${CFG.seconds} seconds each · faster answers score more.<br>Through episode ${CFG.latestEpisode} · ${pool} questions in the bank · Your best: <b style="color:var(--pink)">${best}</b></p>
+      <br><button class="btn solid" id="t-go">▶ Start round</button></div>`;
+    $("#t-go").onclick=start;
+  }
+  function start(){
+    round=shuffle(Q.filter(x=>x.e<=CFG.latestEpisode).slice()).slice(0,CFG.perRound);
+    idx=0; pts=0; correct=0; streak=0; fifty=1; show();
+  }
+  function show(){
+    locked=false; const q=round[idx];
+    const opts=shuffle(q.a.map((t,i)=>({t,ok:i===0})));
+    box().innerHTML=`<div class="tcard">
+      <div class="tmeta"><span>Q ${idx+1}/${round.length}</span><span>${pts} PTS${streak>1?` · 🔥${streak}`:""}</span></div>
+      <div class="ttimer"><i id="t-bar" style="width:100%"></i></div>
+      <div style="margin-top:14px"><span class="tep">EP ${q.e}</span></div>
+      <div class="tq">${q.q}</div>
+      <div class="topts">${opts.map((o,i)=>`<button class="topt" data-ok="${o.ok?1:0}">${o.t}</button>`).join("")}</div>
+      <div class="tfact" id="t-fact"></div>
+      <div class="row" style="display:flex;gap:8px;justify-content:space-between;margin-top:14px">
+        <button class="btn" id="t-5050">✂ 50/50 ${fifty>0?`(${fifty})`:`<span class="ad">AD</span>`}</button>
+        <button class="btn solid" id="t-next" style="display:none">${idx+1<round.length?"Next ▶":"Results ▶"}</button>
+      </div></div>`;
+    box().querySelectorAll(".topt").forEach(b=>b.onclick=()=>answer(b));
+    $("#t-next").onclick=()=>{ idx++; idx<round.length?show():finish(); };
+    $("#t-5050").onclick=useFifty;
+    tLeft=CFG.seconds*10; clearInterval(tick);
+    tick=setInterval(()=>{ if($("#modal").classList.contains("on")||location.hash!=="#trivia") return; tLeft--; const b=$("#t-bar"); if(b) b.style.width=(tLeft/(CFG.seconds*10)*100)+"%"; if(tLeft<=0){ clearInterval(tick); answer(null); } },100);
+  }
+  function useFifty(){
+    if(locked) return;
+    const go=()=>{ const wrong=shuffle([...box().querySelectorAll('.topt[data-ok="0"]:not(.gone)')]); wrong.slice(0,2).forEach(b=>{ b.classList.add("gone"); b.disabled=true; }); $("#t-5050").disabled=true; };
+    if(fifty>0){ fifty--; go(); } else { showRewardedAd(go); }
+  }
+  function answer(btn){
+    if(locked) return; locked=true; clearInterval(tick);
+    const q=round[idx];
+    box().querySelectorAll(".topt").forEach(b=>{ b.disabled=true; if(b.dataset.ok==="1") b.classList.add("right"); });
+    if(btn && btn.dataset.ok==="1"){
+      correct++; streak++;
+      const gain=100+Math.round(tLeft/(CFG.seconds*10)*100)+(streak>=3?50:0);
+      pts+=gain; $("#t-say").textContent=streak>=3?`${streak} in a row! You're basically a Cast Member.`:pick(["Correct. Annoyingly good.","Yes!! You were paying attention.","Ding ding ding!"]);
+      toast(`+${gain}`);
+    } else {
+      if(btn) btn.classList.add("wrong");
+      streak=0; $("#t-say").textContent=btn?pick(["Wrong. Check my bug reports.","Nope! Rewatch that episode, bestie."]):"Time's up! I'll pretend I didn't see that.";
+    }
+    const f=$("#t-fact"); f.textContent="📓 "+q.f; f.classList.add("on");
+    $("#t-next").style.display=""; $("#t-5050").disabled=true;
+  }
+  function finish(){
+    const best=Math.max(store.get("triviaBest",0),pts); store.set("triviaBest",best);
+    const title=correct>=9?"Certified Superfan":correct>=7?"Cast Member Material":correct>=4?"Confessional Regular":"Just Moved In";
+    addXP(correct*15); renderHome();
+    const share=`House Trivia: ${correct}/${round.length} · ${pts} pts · "${title}"`;
+    box().innerHTML=`<div class="tcard tintro"><svg style="width:72px;height:72px"><use href="#ro-mark"/></svg>
+      <h3>${title.toUpperCase()}</h3>
+      <p><b style="font-size:22px;color:var(--cyan)">${correct}/${round.length}</b> correct · <b style="color:var(--pink)">${pts}</b> points<br>Your best: ${best}</p>
+      <div class="bigsig" style="font-family:'Pixelify Sans';color:var(--cyan);font-size:19px">${correct>=7?"Okay, you actually know the house. Respect.":"No shame. Even I needed the bug reports."}</div><br>
+      <div class="row" style="display:flex;gap:8px;justify-content:center"><button class="btn" id="t-share">Copy result</button><button class="btn solid" id="t-again">Play again</button></div></div>`;
+    $("#t-share").onclick=async()=>{ try{ await navigator.clipboard.writeText(share); toast("Copied! Go flex in the group chat."); }catch(e){ toast("Couldn't copy here, sorry!"); } };
+    $("#t-again").onclick=()=>maybeInterstitial(start);
+  }
+  function init(){ intro(); }
+  return {init,intro};
+})();
+
+/* ---------- router ---------- */
+const VIEWS=["home","mahjong","word","sudoku","solitaire","match","trivia"];
+function route(){
+  let v=(location.hash||"#home").slice(1); if(!VIEWS.includes(v)) v="home";
+  VIEWS.forEach(x=>$("#v-"+x).classList.toggle("on",x===v));
+  document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
+  if(v==="mahjong") requestAnimationFrame(MJ.render);
+  if(v==="solitaire") requestAnimationFrame(SOL.render);
+  const nl=document.querySelector("nav a.on"); if(nl) nl.scrollIntoView({inline:"center",block:"nearest"});
+  scrollTo(0,0);
+}
+$("#modal").addEventListener("click",e=>{ if(e.target.id==="modal" && !$("#modal-body").querySelector("[disabled]")) closeModal(); });
+addEventListener("hashchange",route);
+MJ.init(); WORD.init(); SU.init(); SOL.init(); MATCH.init(); TRIVIA.init(); renderHome(); route();
+</script>
+<script>
+/* ---------- installable app (PWA) ---------- */
+if("serviceWorker" in navigator){ addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+(()=>{
+  const btn=document.getElementById("install-btn"); let deferred=null;
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferred=e; if(!standalone) btn.style.display="inline-flex"; });
+  if(ios && !standalone) btn.style.display="inline-flex";
+  btn.onclick=async()=>{
+    if(deferred){ deferred.prompt(); await deferred.userChoice; deferred=null; btn.style.display="none"; return; }
+    modal(`<h3>Install on iPhone</h3><p>1. Tap the <b>Share</b> button in Safari<br>2. Tap <b>Add to Home Screen</b><br>3. Tap <b>Add</b></p><div class="row"><button class="btn solid" onclick="closeModal()">Got it</button></div>`);
+  };
+  addEventListener("appinstalled",()=>{ btn.style.display="none"; toast("Installed. GG."); });
+})();
+</script>
+</body>
+</html>
